@@ -21,6 +21,5 @@ public class ClienteFactoryImpl implements ClienteFactory {
                 .genero(dto.getGenero())
                 .usuario(usuarioCreador) // ← Asociamos el usuario creador
                 .build();
-
     }
 }

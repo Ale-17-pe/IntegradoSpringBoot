@@ -9,9 +9,11 @@ import com.integrador.gym.Exception.ClienteNoEncontrado;
 import com.integrador.gym.Exception.UsuarioNoAutorizado;
 import com.integrador.gym.Factory.ClienteFactory;
 import com.integrador.gym.Model.ClienteModel;
+import com.integrador.gym.Model.Enum.EstadoUsuario;
 import com.integrador.gym.Model.Enum.Roles;
 import com.integrador.gym.Model.UsuarioModel;
 import com.integrador.gym.Repository.ClienteRepository;
+import com.integrador.gym.Repository.UsuarioRepository;
 import com.integrador.gym.Service.ClienteService;
 import com.integrador.gym.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     private ClienteFactory clienteFactory;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Override
     public List<ClienteModel> listarTodos() {
         return clienteRepository.findAll();
@@ -55,11 +60,26 @@ public class ClienteServiceImpl implements ClienteService {
             throw new ClienteDniDuplicado(dto.getDni());
         }
 
-        UsuarioModel usuarioCreador = validarUsuarioCreador(dto.getIdUsuarioCreador());
-        ClienteModel cliente = clienteFactory.crearDesdeDTO(dto, usuarioCreador);
-        ClienteModel guardado = clienteRepository.save(cliente);
+        // 1. Crear usuario
+        UsuarioModel usuario = new UsuarioModel();
+        usuario.setDni(dto.getDni());
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setEmail(dto.getEmail());
+        usuario.setPassword(dto.getPassword());
+        usuario.setTelefono(dto.getTelefono());
+        usuario.setRoles(Roles.CLIENTE);
+        usuario.setFechaNacimiento(dto.getFechaNacimiento());
+        usuario.setEstado(EstadoUsuario.ACTIVO);
 
-        return toDTO(guardado, usuarioCreador);
+        // 2. Guardar usuario
+        UsuarioModel guardadoUsuario = usuarioRepository.save(usuario);
+
+        // 3. Crear cliente
+        ClienteModel cliente = clienteFactory.crearDesdeDTO(dto, guardadoUsuario);
+        ClienteModel guardadoCliente = clienteRepository.save(cliente);
+
+        return toDTO(guardadoCliente, guardadoUsuario);
     }
 
     @Override

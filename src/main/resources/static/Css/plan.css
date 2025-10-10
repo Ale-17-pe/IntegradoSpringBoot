@@ -1,0 +1,30 @@
+body {
+    background-color: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    color: #FFD700;
+    font-weight: bold;
+}
+
+.btn-custom {
+    background: linear-gradient(45deg, #FFD700, #FF4500);
+    color: #fff;
+    border: none;
+}
+
+.btn-custom:hover {
+    background: linear-gradient(45deg, #FF4500, #FFD700);
+}
+
+table {
+    background: #222;
+    color: #fff;
+}
+
+th {
+    background: #FFD700;
+    color: #000;
+}

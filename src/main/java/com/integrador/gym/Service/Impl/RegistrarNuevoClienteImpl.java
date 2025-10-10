@@ -14,11 +14,12 @@ import com.integrador.gym.Model.UsuarioModel;
 import com.integrador.gym.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-@Component
+@Service
 public class RegistrarNuevoClienteImpl implements RegistrarNuevoCliente {
     @Autowired
     private UsuarioService usuarioService;
@@ -33,20 +34,20 @@ public class RegistrarNuevoClienteImpl implements RegistrarNuevoCliente {
     private PagoService pagoService;
 
 
-
     @Override
     @Transactional
     public void ejecutar(RegistrarClienteDTO dto) {
         // 1. Crear usuario (cliente)
-        UsuarioCreacionDTO usuarioDto = new UsuarioCreacionDTO();
-        usuarioDto.setDni(dto.getDni());
-        usuarioDto.setNombre(dto.getNombre());
-        usuarioDto.setApellido(dto.getApellido());
-        usuarioDto.setEmail(dto.getEmail()); // ¡Añade email!
-        usuarioDto.setPassword("default123"); // Temporal
-        usuarioDto.setTelefono(dto.getTelefono());
-        usuarioDto.setRoles(Roles.CLIENTE);
-        usuarioDto.setFechaNacimiento(dto.getFechaNacimiento());
+        UsuarioCreacionDTO usuarioDto = new UsuarioCreacionDTO(
+                dto.getDni(),
+                dto.getNombre(),
+                dto.getApellido(),
+                dto.getEmail(),
+                dto.getPassword(),
+                dto.getTelefono(),
+                Roles.CLIENTE,
+                dto.getFechaNacimiento()
+        );
 
         UsuarioDTO usuario = usuarioService.crear(usuarioDto);
 
@@ -78,4 +79,6 @@ public class RegistrarNuevoClienteImpl implements RegistrarNuevoCliente {
 
         PagoDTO pago = pagoService.crear(pagoDto);
     }
+
+
 }

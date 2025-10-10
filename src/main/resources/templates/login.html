@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - AresFitness</title>
+    <link rel="stylesheet" th:href="@{Css/login.css}">
+    <link rel="icon" th:href="@{Imagenes/logo.png}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .error-message {
+            color: #ff4d4d;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid #ff4d4d;
+        }
+
+        .success-message {
+            color: #28a745;
+            background-color: #e6ffed;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid #28a745;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+<!-- Encabezado -->
+<header>
+    <div class="logo-container">
+        <a th:href="@{/}">
+            <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
+        </a>
+    </div>
+</header>
+
+<div class="main-wrapper">
+    <div class="container">
+        <div class="form-content">
+            <div class="user-icon">
+                <img th:src="@{Imagenes/usuario.png}" alt="Icono de usuario" />
+            </div>
+
+            <h1 id="title">ENTRAR</h1>
+            <p class="subtitle">Ingresa tus credenciales para acceder a tu cuenta</p>
+
+            <!-- Mensajes dinámicos -->
+            <div th:if="${error}" class="error-message">
+                <span th:text="${error}"></span>
+            </div>
+            <div th:if="${success}" class="success-message">
+                <span th:text="${success}"></span>
+            </div>
+
+            <!-- Formulario de inicio de sesión -->
+            <form id="loginForm" th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="input-group">
+                    <div class="input-field" id="dniInput">
+                        <label for="dni" class="sr-only">DNI</label>
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" name="dni" id="dni" placeholder="DNI"
+                               maxlength="8" pattern="\d{8}" title="Ingrese 8 dígitos numéricos" required />
+                    </div>
+
+                    <div class="input-field">
+                        <label for="password" class="sr-only">Contraseña</label>
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" id="password" placeholder="Contraseña" required />
+                    </div>
+
+                    <div class="OLVIDE">
+                        <a th:href="@{/olvide}">Recuperar cuenta</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">Ingresar</button>
+            </form>
+
+            <div class="Registrar">
+                <span>¿Aún no tienes cuenta?</span>
+                <a th:href="@{/registro}">REGISTRAR</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p style="text-align: center; color: #888;">&copy; 2025 AresFitness. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+    // Validación del DNI
+    document.getElementById('dni').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 8) {
+            this.value = this.value.slice(0, 8);
+        }
+    });
+
+    // Animación simple al enviar el formulario
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', () => {
+        const btn = document.querySelector('.btn-login');
+        btn.textContent = "Ingresando...";
+        btn.disabled = true;
+    });
+</script>
+</body>
+</html>

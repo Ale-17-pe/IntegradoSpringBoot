@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Administrador - AresFitness</title>
+    <link th:href="@{/Css/CabezaAdmin.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="admin-container">
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Portal del Administrador</h1>
+            <div class="user-info">
+                <span th:text="'Bienvenido, ' + ${session.usuario.nombre}"></span>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <nav class="admin-nav">
+            <ul>
+                <li class="nav-item active">
+                    <a th:href="@{/PortalAdmin}">
+                        <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/GestionUsuarios}">
+                        <span class="icon"><i class="fas fa-users"></i></span>
+                        <span>Gestión de Usuarios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/GestionPlanes}">
+                        <span class="icon"><i class="fas fa-crown"></i></span>
+                        <span>Gestión de Planes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/GestionContenido}">
+                        <span class="icon"><i class="fas fa-file-alt"></i></span>
+                        <span>Gestión de Contenido</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/ConfSistema}">
+                        <span class="icon"><i class="fas fa-cog"></i></span>
+                        <span>Configuración del Sistema</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/GestionEstadistica}">
+                        <span class="icon"><i class="fas fa-chart-line"></i></span>
+                        <span>Estadísticas Detalladas</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <!-- Mensajes de éxito -->
+        <div th:if="${param.success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:switch="${param.success}">
+                <span th:case="'usuario_creado'">Usuario creado exitosamente</span>
+                <span th:case="'usuario_actualizado'">Usuario actualizado exitosamente</span>
+                <span th:case="'usuario_eliminado'">Usuario eliminado exitosamente</span>
+                <span th:case="'plan_creado'">Plan creado exitosamente</span>
+                <span th:case="'plan_actualizado'">Plan actualizado exitosamente</span>
+                <span th:case="'plan_eliminado'">Plan eliminado exitosamente</span>
+                <span th:case="*">Operación realizada con éxito</span>
+            </span>
+        </div>
+
+        <!-- Mensajes de error -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:switch="${param.error}">
+                <span th:case="'acceso_no_autorizado'">Acceso no autorizado</span>
+                <span th:case="'error_crear_usuario'">Error al crear usuario</span>
+                <span th:case="'error_actualizar_usuario'">Error al actualizar usuario</span>
+                <span th:case="'error_crear_plan'">Error al crear plan</span>
+                <span th:case="'error_crear_contenido'">Error al crear contenido</span>
+                <span th:case="'error_actualizar_contenido'">Error al actualizar contenido</span>
+                <span th:case="'error_actualizar_configuración'">Error al actualizar configuración</span>
+                <span th:case="*">Error en la operación</span>
+            </span>
+        </div>
+
+        <!-- Dashboard principal -->
+        <div id="dashboard-section" class="section active">
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Usuarios Registrados</h3>
+                    </div>
+                    <div class="card-content">
+                        <span class="stat-number" th:text="${totalUsuarios}">0</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span th:text="'+' + (${totalUsuarios} > 0 ? (${usuariosActivos} * 100 / ${totalUsuarios}) : 0) + '% activos'"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Planes Activos</h3>
+                    </div>
+                    <div class="card-content">
+                        <span class="stat-number" th:text="${totalPlanes}">0</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-crown"></i> Disponibles
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Contenido Publicado</h3>
+                    </div>
+                    <div class="card-content">
+                        <span class="stat-number" th:text="${contenidoPublicado}">0</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-file-alt"></i> Artículos y recursos
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Usuarios Activos</h3>
+                    </div>
+                    <div class="card-content">
+                        <span class="stat-number" th:text="${usuariosActivos}">0</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-user-check"></i> En plataforma
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad reciente -->
+            <div class="recent-activity">
+                <h2>Actividad Reciente</h2>
+                <div class="activity-list">
+                    <div class="activity-item" th:each="usuario, iterStat : ${usuarios}" th:if="${iterStat.index < 5}">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-details">
+                            <p th:text="'Nuevo usuario: ' + ${usuario.nombre} + ' ' + ${usuario.apellido}"></p>
+                            <span class="activity-time" th:text="'Rol: ' + ${usuario.rol}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

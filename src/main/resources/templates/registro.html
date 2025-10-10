@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - AresFitness</title>
+    <link rel="stylesheet" th:href="@{Css/registro.css}">
+    <link rel="icon" th:href="@{Imagenes/logo.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<header>
+    <div class="logo-container">
+        <a th:href="@{/index}">
+            <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
+        </a>
+    </div>
+</header>
+<body>
+<main>
+    <section class="formulario">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>CREA TU CUENTA</h2>
+                <p>Únete a la familia AresFitness y comienza el cambio</p>
+            </div>
+
+        <!-- Mensajes de error -->
+            <div th:if="${param.error == 'dni_duplicado'}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> El DNI ingresado ya está registrado.
+            </div>
+            <div th:if="${param.error == 'contrasenas_no_coinciden'}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Las contraseñas no coinciden.
+            </div>
+            <div th:if="${param.error == 'validacion'}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Hay datos inválidos en el formulario.
+            </div>
+            <div th:if="${param.error == 'campos_incompletos'}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Por favor, complete todos los campos.
+            </div>
+            <div th:if="${param.error == 'servidor'}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Error del servidor. Intente nuevamente.
+            </div>
+
+            <form th:action="@{/registro}" method="post">
+                <!-- DNI -->
+                <div class="form-group">
+                    <label for="dni">DNI</label>
+                    <input type="text" id="dni" name="dni" placeholder="Ingrese su DNI" required maxlength="8" pattern="\d{8}">
+                </div>
+
+                <!-- Nombre -->
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+                </div>
+
+                <!-- Apellido -->
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Ingrese su email" required>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" placeholder="Ingrese su teléfono" required>
+                </div>
+
+                <!-- Fecha de nacimiento -->
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                </div>
+
+                <!-- Dirección -->
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ingrese su dirección">
+                </div>
+
+                <!-- Género -->
+                <div class="form-group">
+                    <label for="genero">Género</label>
+                    <select id="genero" name="genero" required>
+                        <option value="">Seleccione un género</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMENINO">Femenino</option>
+                        <option value="NO_ESPECIFICADO">No especificado</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Registrarse</button>
+            </form>
+
+            <div class="login-link">
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 AresFitness. Todos los derechos reservados.</p>
+</footer>
+</body>
+</html>
