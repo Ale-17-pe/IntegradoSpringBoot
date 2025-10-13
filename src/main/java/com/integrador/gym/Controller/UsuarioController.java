@@ -45,8 +45,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody UsuarioCreacionDTO dto) {
         try {
-            UsuarioDTO nuevo = writeService.crear(dto);
-            return ResponseEntity.ok(nuevo);
+            return ResponseEntity.ok(usuarioService.crear(dto));
         } catch (EmailYaRegistrado | DniYaRegistrado e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -55,14 +54,11 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioActualizacionDTO dto) {
         try {
-            UsuarioDTO actualizado = writeService.actualizar(id, dto);
-            return ResponseEntity.ok(actualizado);
+            return ResponseEntity.ok(usuarioService.actualizar(id, dto));
         } catch (UsuarioNoEncontrado e) {
             return ResponseEntity.notFound().build();
         } catch (EmailYaRegistrado | DniYaRegistrado | RolNoPermitido e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", "Error interno: " + e.getMessage()));
         }
     }
 

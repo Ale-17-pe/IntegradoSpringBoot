@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Cliente - AresFitness</title>
+    <link th:href="@{Css/Encabezado.css}" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
+        .dashboard-container { max-width: 900px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; }
+        .rol-tag { display: inline-block; padding: 5px 10px; border-radius: 5px; background-color: #28a745; color: white; font-weight: bold; margin-left: 10px; }
+        .menu a { display: block; margin: 15px 0; padding: 10px; background-color: #e9ecef; border-radius: 5px; text-decoration: none; color: #333; transition: background-color 0.2s; }
+        .menu a:hover { background-color: #dee2e6; }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/}">
+                <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/ubicacion}"><i class="fas fa-map-marker-alt"></i> UBICACIÓN</a></li>
+                <li><a th:href="@{/ejercicios}"><i class="fas fa-running"></i> EJERCICIOS</a></li>
+                <li><a th:href="@{/membresias}"><i class="fas fa-crown"></i> MEMBRESÍAS</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button class="user-btn" id="userMenuBtn">
+                <i class="fas fa-user"></i> Mi Cuenta
+            </button>
+
+            <div class="auth-dropdown" id="authDropdown" th:if="${session.usuario == null}">
+                <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                <a th:href="@{/registro}"><i class="fas fa-user-plus"></i> Registrarse</a>
+            </div>
+
+            <div class="auth-dropdown" id="" th:if="${session.usuario != null}">
+                <a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="dashboard-container">
+    <h1 th:text="'¡Hola, ' + ${nombre} + '!'">¡Hola!</h1>
+    <p>Has iniciado sesión con éxito como: <span class="rol-tag" th:text="${rol}"></span></p>
+
+    <h2>Tu Área de Cliente</h2>
+    <div class="menu">
+        <a th:href="@{/perfil}">Ver / Editar Mi Perfil</a>
+        <a th:href="@{/membresias}">Gestionar Membresías y Pagos (Próximamente)</a>
+        <a th:href="@{/clases}">Reservar Clases y Actividades (Próximamente)</a>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a th:href="@{/logout}" style="color: #dc3545; font-weight: bold;">Cerrar Sesión</a>
+    </p>
+</div>
+
+</body>
+</html>

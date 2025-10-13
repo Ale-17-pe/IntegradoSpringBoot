@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Nuevo Plan - Panel Admin</title>
+    <link rel="stylesheet" th:href="@{Css/CrearPlan.css}">
+    <link th:href="@{Imagenes/logo.png}" rel="icon" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="logo-container">
+        <a th:href="@{/}">
+            <img th:src="@{/Imagenes/logo.png}" alt="Logo AresFitness">
+        </a>
+        <div class="logo-text">
+            <h1>AresFitness</h1>
+            <p>Panel de Administración</p>
+        </div>
+    </div>
+    <nav>
+        <a th:href="@{/admin/dashboard-admin}">
+            <i class="fas fa-arrow-left"></i>
+            Volver al Panel
+        </a>
+    </nav>
+</header>
+
+<!-- Contenido Principal -->
+<div class="main-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>Crear Nuevo Plan de Membresía</h1>
+            <p>Defina los detalles del nuevo plan para sus clientes</p>
+        </div>
+
+        <!-- Alertas -->
+        <div th:if="${success}" class="success-alert">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Formulario -->
+        <form th:action="@{/admin/planes/crear}" th:object="${planDTO}" method="post">
+            <div class="input-group">
+                <label for="nombre">Nombre del Plan</label>
+                <input type="text" id="nombre" th:field="*{nombre}" placeholder="Ej: Plan Premium Mensual" required/>
+                <div class="input-icon">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('nombre')}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:errors="*{nombre}"></span>
+                </p>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="precio">Precio ($)</label>
+                    <input type="number" id="precio" th:field="*{precio}" step="0.01" placeholder="0.00" min="0" required/>
+                    <div class="input-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <p class="error-message-field" th:if="${#fields.hasErrors('precio')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{precio}"></span>
+                    </p>
+                </div>
+
+                <div class="input-group">
+                    <label for="duracionDias">Duración (Días)</label>
+                    <input type="number" id="duracionDias" th:field="*{duracionDias}" placeholder="30" min="1" required/>
+                    <div class="input-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <p class="error-message-field" th:if="${#fields.hasErrors('duracionDias')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{duracionDias}"></span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="descripcion">Descripción Breve</label>
+                <textarea id="descripcion" th:field="*{descripcion}" rows="3" placeholder="Describa brevemente el plan..."></textarea>
+                <div class="input-icon">
+                    <i class="fas fa-align-left"></i>
+                </div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('descripcion')}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:errors="*{descripcion}"></span>
+                </p>
+                <div class="char-counter" id="descripcion-counter">
+                    <span id="descripcion-chars">0</span>/150 caracteres
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="beneficios">Beneficios Detallados</label>
+                <textarea id="beneficios" th:field="*{beneficios}" rows="5" placeholder="Liste los beneficios del plan (separados por punto y coma)"></textarea>
+                <div class="input-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('beneficios')}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:errors="*{beneficios}"></span>
+                </p>
+                <div class="char-counter" id="beneficios-counter">
+                    <span id="beneficios-chars">0</span>/500 caracteres
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="estado">Estado</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option value="" disabled selected>Seleccione un estado</option>
+                    <option th:each="estado : ${T(com.integrador.gym.Model.Enum.EstadoPlan).values()}"
+                            th:value="${estado}"
+                            th:text="${estado.name()}">
+                    </option>
+                </select>
+                <div class="input-icon">
+                    <i class="fas fa-toggle-on"></i>
+                </div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('estado')}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:errors="*{estado}"></span>
+                </p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i>
+                    Guardar Plan
+                </button>
+                <a th:href="@{/admin/dashboard-admin}" class="btn-back">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2023 AresFitness - Todos los derechos reservados</p>
+</footer>
+
+<script>
+    // Efectos de animación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar efecto de aparición escalonada a los campos
+        const inputs = document.querySelectorAll('.input-group');
+        inputs.forEach((input, index) => {
+            input.style.animationDelay = `${index * 0.1}s`;
+            input.style.animation = 'fadeIn 0.5s ease-out forwards';
+        });
+
+        // Contadores de caracteres
+        const descripcionTextarea = document.getElementById('descripcion');
+        const beneficiosTextarea = document.getElementById('beneficios');
+        const descripcionCounter = document.getElementById('descripcion-chars');
+        const beneficiosCounter = document.getElementById('beneficios-chars');
+        const descripcionCounterDiv = document.getElementById('descripcion-counter');
+        const beneficiosCounterDiv = document.getElementById('beneficios-counter');
+
+        function updateCharCount(textarea, counter, counterDiv, maxLength) {
+            const length = textarea.value.length;
+            counter.textContent = length;
+
+            if (length > maxLength * 0.8) {
+                counterDiv.classList.add('warning');
+                counterDiv.classList.remove('error');
+            } else if (length > maxLength) {
+                counterDiv.classList.add('error');
+                counterDiv.classList.remove('warning');
+            } else {
+                counterDiv.classList.remove('warning', 'error');
+            }
+        }
+
+        descripcionTextarea.addEventListener('input', function() {
+            updateCharCount(this, descripcionCounter, descripcionCounterDiv, 150);
+        });
+
+        beneficiosTextarea.addEventListener('input', function() {
+            updateCharCount(this, beneficiosCounter, beneficiosCounterDiv, 500);
+        });
+
+        // Inicializar contadores
+        updateCharCount(descripcionTextarea, descripcionCounter, descripcionCounterDiv, 150);
+        updateCharCount(beneficiosTextarea, beneficiosCounter, beneficiosCounterDiv, 500);
+
+        // Efecto de foco en campos
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+    });
+</script>
+</body>
+
+</body>
+</html>

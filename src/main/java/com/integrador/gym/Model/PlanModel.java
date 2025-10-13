@@ -33,6 +33,7 @@ public class  PlanModel {
     private Integer duracionDias;
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String beneficios;
 
     @Enumerated(EnumType.STRING)

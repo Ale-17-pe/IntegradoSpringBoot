@@ -8,11 +8,19 @@ import com.integrador.gym.Exception.EmailYaRegistrado;
 import com.integrador.gym.Exception.RolNoPermitido;
 import com.integrador.gym.Exception.UsuarioNoEncontrado;
 import com.integrador.gym.Factory.UsuarioFactory;
+import com.integrador.gym.Model.ClienteModel;
 import com.integrador.gym.Model.Enum.Roles;
 import com.integrador.gym.Model.UsuarioModel;
+import com.integrador.gym.Repository.ClienteRepository;
 import com.integrador.gym.Repository.UsuarioRepository;
 import com.integrador.gym.Service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +31,19 @@ import java.util.Optional;
 
 @Service("usuarioServiceImpl")
 @Transactional
-public class UsuarioServiceImpl implements UsuarioService {
+@RequiredArgsConstructor
+public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
     @Autowired
     private UsuarioFactory usuarioFactory;
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final ClienteRepository clienteRepository; // Asumiendo que usas @RequiredArgsConstructor
 
 
     @Override
@@ -47,13 +61,32 @@ public class UsuarioServiceImpl implements UsuarioService {
         validarEdadMinima(dto.getFechaNacimiento());
         validarUnicidad(dto.getEmail(), dto.getDni(), null); // ✅ Así evitas duplicar lógica
 
+        if (dto.getRoles() != Roles.CLIENTE) {
+            throw new RolNoPermitido("Solo se puede registrar el rol CLIENTE a través de este formulario.");
+        }
+
         UsuarioModel usuario = usuarioFactory.crearDesdeDTO(dto);
+        usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+        UsuarioModel nuevoUsuario = usuarioRepository.save(usuario);
+
+        ClienteModel nuevoCliente = ClienteModel.builder()
+                .dni(nuevoUsuario.getDni())
+                .nombre(nuevoUsuario.getNombre())
+                .apellido(nuevoUsuario.getApellido())
+                .telefono(dto.getTelefono())
+                .direccion(dto.getDireccion())
+                .fechaNacimiento(dto.getFechaNacimiento())
+                .genero(dto.getGenero())
+                .usuario(nuevoUsuario) // <--- ASOCIACIÓN CLAVE
+                .build();
+
+        clienteRepository.save(nuevoCliente);
+
         if (esEmpleado(usuario.getRoles())) {
             usuario.setFechaContratacion(LocalDate.now());
         }
 
-        UsuarioModel guardado = usuarioRepository.save(usuario);
-        return toDTO(guardado);
+        return toDTO(nuevoUsuario);
     }
     private UsuarioDTO toDTO(UsuarioModel usuario) {
         UsuarioDTO dto = new UsuarioDTO();
@@ -75,6 +108,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioDTO actualizar(Long id, UsuarioActualizacionDTO dto) {
         UsuarioModel existente = obtenerPorIdOrThrow(id);
+
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            existente.setPassword(passwordEncoder.encode(dto.getPassword())); // 🔐 encriptar
+        }
 
         // Regla de negocio: no se puede convertir CLIENT a empleado directamente
         if (existente.getRoles() == Roles.CLIENTE && esEmpleado(dto.getRoles())) {
@@ -152,6 +189,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioModel obtenerPorIdOrThrow(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontrado(id));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UsuarioModel usuario = usuarioRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + username));
+
+        if (usuario.getEstado() != null && usuario.getEstado().name().equalsIgnoreCase("INACTIVO")) {
+            throw new UsernameNotFoundException("Usuario inactivo: " + username);
+        }
+
+        return User.builder()
+                .username(usuario.getEmail())
+                .password(usuario.getPassword())
+                .roles(usuario.getRoles().name()) // Enum → String
+                .build();
     }
 
     /*

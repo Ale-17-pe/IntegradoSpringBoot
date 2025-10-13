@@ -40,6 +40,9 @@ public class MembresiaModel {
     @JoinColumn(name = "id_usuario", nullable = false)
     private UsuarioModel usuario;
 
+
     @OneToMany(mappedBy = "membresia", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<PagoModel> pagos;
+
+    private Double precio;
 }

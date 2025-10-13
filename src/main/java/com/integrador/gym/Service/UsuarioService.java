@@ -8,15 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioService {
-
     List<UsuarioModel> listarTodos();
-
     Optional<UsuarioModel> obtenerPorId(Long id);
-
     UsuarioDTO crear(UsuarioCreacionDTO dto);
-
-
     UsuarioDTO actualizar(Long id, UsuarioActualizacionDTO dto);
-
     void eliminar(Long id);
 }

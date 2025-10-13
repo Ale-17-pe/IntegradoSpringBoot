@@ -49,17 +49,10 @@ public class PagoServiceImpl implements PagoService {
         if (dto.getFechaPago() != null && dto.getFechaPago().isAfter(LocalDateTime.now().plusMinutes(5))) {
             throw new PagoInvalido("La fecha de pago no puede ser futura.");
         }
-        long cantidadPagos = pagoRepository.countByMembresiaIdMembresia(membresia.getIdMembresia());
-        if (cantidadPagos == 0) {
-            if (dto.getMonto() == null || dto.getMonto().compareTo(membresia.getPlan().getPrecio()) != 0) {
-                throw new PagoInvalido(
-                        "El monto del primer pago debe ser exactamente: " + membresia.getPlan().getPrecio()
-                );
-            }
-        }
         if (membresia.getEstadoMembresia() == EstadoMembresia.CANCELADA) {
             throw new PagoInvalido("No se puede pagar una membresía cancelada.");
         }
+        long cantidadPagos = pagoRepository.countByMembresiaIdMembresia(membresia.getIdMembresia());
         boolean esPrimerPago = cantidadPagos == 0;
         ValidacionPago estrategia = null;
         for (ValidacionPago s : estrategias) {

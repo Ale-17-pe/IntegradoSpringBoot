@@ -2,118 +2,104 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - AresFitness</title>
-    <link rel="stylesheet" th:href="@{Css/registro.css}">
-    <link rel="icon" th:href="@{Imagenes/logo.png}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Registro de Cuenta - GYM</title>
+    <style>
+        /* Estilos básicos para claridad */
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="date"], select {
+            width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px;
+        }
+        .error { color: red; margin-top: 5px; }
+    </style>
 </head>
-<header>
-    <div class="logo-container">
-        <a th:href="@{/index}">
-            <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
-        </a>
-    </div>
-</header>
 <body>
-<main>
-    <section class="formulario">
-        <div class="form-container">
-            <div class="form-header">
-                <h2>CREA TU CUENTA</h2>
-                <p>Únete a la familia AresFitness y comienza el cambio</p>
-            </div>
 
-        <!-- Mensajes de error -->
-            <div th:if="${param.error == 'dni_duplicado'}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> El DNI ingresado ya está registrado.
-            </div>
-            <div th:if="${param.error == 'contrasenas_no_coinciden'}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> Las contraseñas no coinciden.
-            </div>
-            <div th:if="${param.error == 'validacion'}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> Hay datos inválidos en el formulario.
-            </div>
-            <div th:if="${param.error == 'campos_incompletos'}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> Por favor, complete todos los campos.
-            </div>
-            <div th:if="${param.error == 'servidor'}" class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> Error del servidor. Intente nuevamente.
-            </div>
+<div class="form-container">
+    <h2>Registro de Nuevo Cliente</h2>
+    <p>Crea tu cuenta. Los campos marcados con (*) son obligatorios.</p>
 
-            <form th:action="@{/registro}" method="post">
-                <!-- DNI -->
-                <div class="form-group">
-                    <label for="dni">DNI</label>
-                    <input type="text" id="dni" name="dni" placeholder="Ingrese su DNI" required maxlength="8" pattern="\d{8}">
-                </div>
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+    <div th:if="${mensajeExito}">
+        <p style="color: green;" th:text="${mensajeExito}"></p>
+        <p>¡Ahora puedes <a th:href="@{/login}">iniciar sesión</a>!</p>
+    </div>
 
-                <!-- Nombre -->
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
-                </div>
+    <form th:action="@{/registro}" th:object="${usuario}" method="post">
 
-                <!-- Apellido -->
-                <div class="form-group">
-                    <label for="apellido">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
-                </div>
-
-                <!-- Email -->
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Ingrese su email" required>
-                </div>
-
-                <!-- Contraseña -->
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
-                </div>
-
-                <!-- Teléfono -->
-                <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="text" id="telefono" name="telefono" placeholder="Ingrese su teléfono" required>
-                </div>
-
-                <!-- Fecha de nacimiento -->
-                <div class="form-group">
-                    <label for="fechaNacimiento">Fecha de Nacimiento</label>
-                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
-                </div>
-
-                <!-- Dirección -->
-                <div class="form-group">
-                    <label for="direccion">Dirección</label>
-                    <input type="text" id="direccion" name="direccion" placeholder="Ingrese su dirección">
-                </div>
-
-                <!-- Género -->
-                <div class="form-group">
-                    <label for="genero">Género</label>
-                    <select id="genero" name="genero" required>
-                        <option value="">Seleccione un género</option>
-                        <option value="MASCULINO">Masculino</option>
-                        <option value="FEMENINO">Femenino</option>
-                        <option value="NO_ESPECIFICADO">No especificado</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-primary">Registrarse</button>
-            </form>
-
-            <div class="login-link">
-                ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
-            </div>
+        <div class="form-group">
+            <label for="email">Email (*)</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="correo@ejemplo.com" required/>
+            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></p>
         </div>
-    </section>
-</main>
 
-<footer>
-    <p>&copy; 2025 AresFitness. Todos los derechos reservados.</p>
-</footer>
+        <div class="form-group">
+            <label for="password">Contraseña (*)</label>
+            <input type="password" id="password" th:field="*{password}" required/>
+            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></p>
+        </div>
+
+        <input type="hidden" th:field="*{roles}" th:value="CLIENTE" />
+
+        <hr/>
+
+        <div class="form-group">
+            <label for="dni">DNI (*)</label>
+            <input type="text" id="dni" th:field="*{dni}" placeholder="DNI (8 dígitos)" required/>
+            <p th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="nombre">Nombre (*)</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required/>
+            <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="apellido">Apellido (*)</label>
+            <input type="text" id="apellido" th:field="*{apellido}" required/>
+            <p th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento (*)</label>
+            <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" required/>
+            <p th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" th:field="*{telefono}" placeholder="Opcional"/>
+            <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" th:field="*{direccion}" placeholder="Calle, número, ciudad"/>
+            <p th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="genero">Género (*)</label>
+            <select id="genero" th:field="*{genero}" required>
+                <option value="" selected disabled>Selecciona tu género</option>
+
+                <option th:each="gen : ${generosDisponibles}"
+                        th:value="${gen}" th:text="${gen.name().replace('_', ' ')}"></option>
+            </select>
+            <p th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}" class="error"></p>
+        </div>
+
+        <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Registrarse
+        </button>
+
+    </form>
+</div>
+
 </body>
 </html>

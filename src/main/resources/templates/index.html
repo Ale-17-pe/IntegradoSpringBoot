@@ -42,7 +42,7 @@
                 <a th:href="@{/registro}"><i class="fas fa-user-plus"></i> Registrarse</a>
             </div>
 
-            <div class="auth-dropdown" id="authDropdown" th:if="${session.usuario != null}">
+            <div class="auth-dropdown" id="" th:if="${session.usuario != null}">
                 <a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a>
                 <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>

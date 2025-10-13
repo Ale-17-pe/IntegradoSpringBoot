@@ -38,16 +38,20 @@ public class RegistrarNuevoClienteImpl implements RegistrarNuevoCliente {
     @Transactional
     public void ejecutar(RegistrarClienteDTO dto) {
         // 1. Crear usuario (cliente)
-        UsuarioCreacionDTO usuarioDto = new UsuarioCreacionDTO(
-                dto.getDni(),
-                dto.getNombre(),
-                dto.getApellido(),
-                dto.getEmail(),
-                dto.getPassword(),
-                dto.getTelefono(),
-                Roles.CLIENTE,
-                dto.getFechaNacimiento()
-        );
+        UsuarioCreacionDTO usuarioDto = UsuarioCreacionDTO.builder()
+                .dni(dto.getDni())
+                .nombre(dto.getNombre())
+                .apellido(dto.getApellido())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .telefono(dto.getTelefono())
+                .roles(Roles.CLIENTE)
+                .fechaNacimiento(dto.getFechaNacimiento())
+                // Mapeo completo de campos extra:
+                .direccion(dto.getDireccion())
+                .genero(dto.getGenero())
+                .idUsuarioCreador(dto.getIdUsuarioCreador())
+                .build();
 
         UsuarioDTO usuario = usuarioService.crear(usuarioDto);
 
@@ -60,24 +64,13 @@ public class RegistrarNuevoClienteImpl implements RegistrarNuevoCliente {
         clienteDto.setFechaNacimiento(dto.getFechaNacimiento());
         clienteDto.setIdUsuarioCreador(dto.getIdUsuarioCreador());
 
+        // ¡CAMPOS AÑADIDOS AHORA!
+        clienteDto.setDireccion(dto.getDireccion());
+        clienteDto.setGenero(dto.getGenero());
+        clienteDto.setEmail(dto.getEmail());
+        clienteDto.setPassword(dto.getPassword());
+
         ClienteDTO cliente = clienteService.crear(clienteDto);
-
-        // 3. Crear membresía
-        MembresiaCreacionDTO membresiaDto = new MembresiaCreacionDTO();
-        membresiaDto.setIdCliente(cliente.getIdCliente());
-        membresiaDto.setIdPlan(dto.getIdPlan()); // ¡Añade idPlan!
-        membresiaDto.setFechaInicio(LocalDate.now());
-
-        MembresiaDto membresia = membresiaService.crear(membresiaDto);
-
-        // 4. Crear pago
-        PagoCreacionDTO pagoDto = new PagoCreacionDTO();
-        pagoDto.setIdMembresia(membresia.getIdMembresia());
-        pagoDto.setMonto(dto.getMonto());
-        pagoDto.setMetodoPago(MetodoPago.valueOf(dto.getMetodoPago()));
-        pagoDto.setFechaPago(LocalDate.now().atStartOfDay());
-
-        PagoDTO pago = pagoService.crear(pagoDto);
     }
 
 

@@ -25,7 +25,7 @@ public class UsuarioModel {
     private Long idUsuario;
 
     @NotBlank(message = "DNI es obligatorio")
-    @Pattern(regexp = "\\d{7,8}", message = "DNI debe tener 7 u 8 dígitos")
+    @Pattern(regexp = "\\d{8}", message = "DNI debe tener 8 dígitos")
     private String dni;
 
     @NotBlank(message = "Nombre es obligatorio")
@@ -39,6 +39,7 @@ public class UsuarioModel {
     private String email;
 
     @NotBlank(message = "Contraseña es obligatoria")
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Pattern(regexp = "\\d{6,15}", message = "Teléfono debe contener entre 6 y 15 dígitos")
@@ -80,4 +81,6 @@ public class UsuarioModel {
     public boolean isActivo() {
         return estado == EstadoUsuario.ACTIVO;
     }
+
+
 }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Mi Perfil - AresFitness</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
+        .form-container { max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .error { color: #dc3545; font-size: 0.9em; margin-top: 5px; }
+        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Editar Perfil</h1>
+    <p>Actualiza tu información personal y de contacto.</p>
+
+    <form th:action="@{/perfil/editar}" th:object="${perfilDTO}" method="post">
+
+        <div class="input-group">
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" th:field="*{dni}" maxlength="8" readonly/>
+            <p class="error" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required/>
+            <p class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" th:field="*{apellido}" required/>
+            <p class="error" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" th:field="*{telefono}"/>
+            <p class="error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento</label>
+            <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" required/>
+            <p class="error" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="genero">Género</label>
+            <select id="genero" th:field="*{genero}" required>
+                <option th:each="g : ${T(com.integrador.gym.Model.Enum.Genero).values()}"
+                        th:value="${g}"
+                        th:text="${g.name()}">
+                </option>
+            </select>
+            <p class="error" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}"></p>
+        </div>
+
+        <div class="input-group">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" th:field="*{direccion}"/>
+            <p class="error" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></p>
+        </div>
+
+        <button type="submit">Guardar Cambios</button>
+        <a th:href="@{/perfil}" style="margin-left: 15px; color: #6c757d;">Cancelar</a>
+    </form>
+</div>
+
+</body>
+</html>

@@ -47,6 +47,11 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanDTO crear(PlanCreacionDTO dto) {
+
+        if (planRepository.existsByNombre(dto.getNombre())) {
+            throw new IllegalArgumentException("Ya existe un plan con el nombre: " + dto.getNombre());
+        }
+
         validarPlan(dto); // Reglas de negocio
         asegurarNombreUnico(dto.getNombre(), null); // Verificar unicidad
 

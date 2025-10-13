@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - AresFitness</title>
+    <link rel="stylesheet" th:href=@{Css/admin.css}>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h1>AresFitness</h1>
+            </div>
+            <p>Panel de Administración</p>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item active">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-users"></i></span>
+                        <span>Gestión de Usuarios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-credit-card"></i></span>
+                        <span>Planes y Membresías</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                        <span>Operaciones y Clases</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                        <span>Reportes y Estadísticas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-cogs"></i></span>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div class="user-details">
+                    <p class="user-name">Administrador</p>
+                    <p class="user-role">Super Admin</p>
+                </div>
+            </div>
+            <a href="@{/logout}" class="logout-btn">
+                <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Panel de Administración</h1>
+                <p>Gestiona usuarios, planes y operaciones del gimnasio</p>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="quick-stats">
+                    <div class="stat">
+                        <span class="stat-value">245</span>
+                        <span class="stat-label">Usuarios Activos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">78%</span>
+                        <span class="stat-label">Ocupación</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">12</span>
+                        <span class="stat-label">Clases Hoy</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <h2 class="section-title">Módulos de Gestión</h2>
+
+            <div class="module-grid">
+                <!-- Gestión de Usuarios -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon user-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h2>Gestión de Usuarios</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Administra los usuarios del sistema: clientes, entrenadores y administradores.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a th:href="@{/admin/usuarios/crear}" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-plus"></i></span>
+                                    <span>Crear Nuevo Usuario</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-list"></i></span>
+                                    <span>Listar y Editar Usuarios</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-key"></i></span>
+                                    <span>Resetear Contraseñas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">Última actualización: Hoy</span>
+                        <span class="card-badge">ACTIVO</span>
+                    </div>
+                </div>
+
+                <!-- Planes y Membresías -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon plan-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h2>Planes y Membresías</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Gestiona los planes de suscripción y membresías disponibles para los clientes.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a th:href="@{/admin/planes/crear}" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-plus"></i></span>
+                                    <span>Crear Nuevo Plan</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-list"></i></span>
+                                    <span>Listar y Editar Planes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-search"></i></span>
+                                    <span>Revisar Membresías Activas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">12 planes activos</span>
+                        <span class="card-badge">NUEVO</span>
+                    </div>
+                </div>
+
+                <!-- Operaciones y Clases -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon operation-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h2>Operaciones y Clases</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Organiza horarios, asigna entrenadores y gestiona las actividades del gimnasio.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-calendar"></i></span>
+                                    <span>Gestionar Horarios de Clases</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-user-tie"></i></span>
+                                    <span>Asignar Entrenadores</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-chart-bar"></i></span>
+                                    <span>Reportes de Asistencia</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">15 clases esta semana</span>
+                        <span class="card-badge">POPULAR</span>
+                    </div>
+                </div>
+
+                <!-- Reportes y Estadísticas -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon report-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h2>Reportes y Estadísticas</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Analiza el rendimiento del gimnasio con reportes detallados y métricas clave.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-chart-line"></i></span>
+                                    <span>Estadísticas de Ingresos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-users"></i></span>
+                                    <span>Reporte de Asistencia</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-file-alt"></i></span>
+                                    <span>Reportes Personalizados</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">+15% ingresos este mes</span>
+                        <span class="card-badge">ÉXITO</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Efectos de animación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar efecto de aparición escalonada a las tarjetas
+        const cards = document.querySelectorAll('.module-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Efecto de notificación
+        const notificationBtn = document.querySelector('.notification-btn');
+        notificationBtn.addEventListener('click', function() {
+            this.style.transform = 'rotate(15deg)';
+            setTimeout(() => {
+                this.style.transform = 'rotate(0)';
+            }, 300);
+        });
+    });
+</script>
+</body>
+</html>

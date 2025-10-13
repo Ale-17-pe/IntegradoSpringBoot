@@ -11,10 +11,10 @@ import java.util.Optional;
 public interface ClienteService {
     List<ClienteModel> listarTodos();
     Optional<ClienteModel> obtenerPorId(Long id);
-
     ClienteDTO crear(ClienteCreacionDTO dto);
-
-        ClienteDTO actualizar(Long id, ClienteActualizacionDTO dto);
-    void eliminar(Long id);
+    ClienteDTO actualizar(String dni, ClienteActualizacionDTO dto);
+    void eliminar(String dni);
     boolean existePorDni(String dni);
+    Optional<ClienteModel> obtenerClientePorDni(String dni);
+
 }

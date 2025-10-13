@@ -13,6 +13,7 @@ import com.integrador.gym.Model.Enum.Roles;
 import com.integrador.gym.Model.UsuarioModel;
 import com.integrador.gym.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,9 +28,13 @@ public class UsuarioWriteServiceImpl implements UsuarioWriteService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UsuarioDTO crear(UsuarioCreacionDTO dto) {
         UsuarioModel usuario = usuarioFactory.crearDesdeDTO(dto);
+        usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         UsuarioModel guardado = usuarioRepository.save(usuario);
         return toDTO(guardado);
     }
@@ -51,12 +56,14 @@ public class UsuarioWriteServiceImpl implements UsuarioWriteService {
         existente.setNombre(dto.getNombre());
         existente.setApellido(dto.getApellido());
         existente.setEmail(dto.getEmail());
-        existente.setPassword(dto.getPassword());
         existente.setTelefono(dto.getTelefono());
         existente.setRoles(dto.getRoles());
         existente.setFechaNacimiento(dto.getFechaNacimiento());
         existente.setEstado(existente.getEstado());
 
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            existente.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         UsuarioModel actualizado = usuarioRepository.save(existente);
         return toDTO(actualizado);
     }

@@ -1,12 +1,13 @@
 package com.integrador.gym.Dto.Creacion;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter @Getter
+@Setter @Getter @Builder
 public class MembresiaCreacionDTO {
     @NotNull(message = "ID del cliente es obligatorio")
     private Long idCliente;

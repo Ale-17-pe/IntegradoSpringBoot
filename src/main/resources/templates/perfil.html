@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${cliente.nombre} + ' - Mi Perfil'"></title>
+    <style>
+        /* (Tus estilos CSS aquí, usando el ejemplo anterior para claridad) */
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
+        .perfil-card { max-width: 800px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 20px; }
+        .data-grid dt { font-weight: bold; color: #555; }
+        .data-grid dd { margin-left: 0; color: #333; }
+        .rol-tag { display: inline-block; padding: 5px 10px; border-radius: 5px; background-color: #28a745; color: white; font-weight: bold; }
+        .alert-success { padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 20px; }
+        .action-buttons a { text-decoration: none; margin-right: 15px; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .edit-button { background-color: #ffc107; color: #343a40; }
+    </style>
+</head>
+<body>
+
+<div class="perfil-card">
+
+    <div th:if="${success}" class="alert-success">
+        <p th:text="${success}"></p>
+    </div>
+
+    <h1 th:text="'Bienvenido/a, ' + ${cliente.nombre}">Bienvenido</h1>
+    <p>Rol de Cuenta: <span class="rol-tag" th:text="${rol}"></span></p>
+
+    <h2>Datos Personales</h2>
+    <dl class="data-grid">
+        <dt>Nombre Completo:</dt>
+        <dd th:text="${cliente.nombre} + ' ' + ${cliente.apellido}"></dd>
+
+        <dt>DNI:</dt>
+        <dd th:text="${cliente.dni}"></dd>
+
+        <dt>Fecha de Nacimiento:</dt>
+        <dd th:text="${#temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy')}"></dd>
+
+        <dt>Género:</dt>
+        <dd th:text="${cliente.genero.name()}"></dd>
+
+        <dt>Teléfono:</dt>
+        <dd th:text="${cliente.telefono != null ? cliente.telefono : 'N/A'}"></dd>
+
+        <dt>Dirección:</dt>
+        <dd th:text="${cliente.direccion != null ? cliente.direccion : 'N/A'}"></dd>
+    </dl>
+
+    <div class="action-buttons" style="margin-top: 30px;">
+        <a th:href="@{/perfil/editar}" class="edit-button">Editar Perfil</a>
+
+        <a th:href="@{/dashboard}" style="color: #007bff;">Volver al Dashboard</a>
+    </div>
+
+</div>
+
+</body>
+</html>

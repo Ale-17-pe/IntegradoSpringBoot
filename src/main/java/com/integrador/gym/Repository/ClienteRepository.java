@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ClienteRepository extends JpaRepository<ClienteModel, Long> {
     boolean existsByDni(String dni);
-    boolean existsByDniAndIdClienteNot(String dni, Long id);
-    long countByUsuarioIdUsuario(Long idUsuario);
     Optional<ClienteModel> findByDni(String dni);
 }

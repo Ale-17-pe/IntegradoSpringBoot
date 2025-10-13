@@ -37,8 +37,6 @@ public class ClienteServiceImpl implements ClienteService {
     @Qualifier("usuarioServiceImpl")
     private UsuarioService usuarioService;
 
-    @Autowired
-    private ClienteFactory clienteFactory;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -54,68 +52,69 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ClienteDTO crear(ClienteCreacionDTO dto) {
-        validarEdadMinima(dto.getFechaNacimiento());
-        if (clienteRepository.existsByDni(dto.getDni())) {
-            throw new ClienteDniDuplicado(dto.getDni());
-        }
-
-        // 1. Crear usuario
-        UsuarioModel usuario = new UsuarioModel();
-        usuario.setDni(dto.getDni());
-        usuario.setNombre(dto.getNombre());
-        usuario.setApellido(dto.getApellido());
-        usuario.setEmail(dto.getEmail());
-        usuario.setPassword(dto.getPassword());
-        usuario.setTelefono(dto.getTelefono());
-        usuario.setRoles(Roles.CLIENTE);
-        usuario.setFechaNacimiento(dto.getFechaNacimiento());
-        usuario.setEstado(EstadoUsuario.ACTIVO);
-
-        // 2. Guardar usuario
-        UsuarioModel guardadoUsuario = usuarioRepository.save(usuario);
-
-        // 3. Crear cliente
-        ClienteModel cliente = clienteFactory.crearDesdeDTO(dto, guardadoUsuario);
-        ClienteModel guardadoCliente = clienteRepository.save(cliente);
-
-        return toDTO(guardadoCliente, guardadoUsuario);
+    public ClienteDTO crear(com.integrador.gym.Dto.Creacion.ClienteCreacionDTO dto) {
+        throw new UnsupportedOperationException("La creación de clientes debe hacerse a través del registro de usuario.");
     }
 
     @Override
-    public ClienteDTO actualizar(Long id, ClienteActualizacionDTO dto) {
-        ClienteModel existente = obtenerPorIdOrThrow(id);
+    @Transactional
+    public ClienteDTO actualizar(String dni, ClienteActualizacionDTO dto) {
+        UsuarioModel usuarioAsociado = usuarioRepository.findByDni(dni)
+                .orElseThrow(() -> new UsuarioNoAutorizado("Usuario no encontrado con DNI: " + dni));
 
+        ClienteModel clienteExistente = clienteRepository.findByDni(dni)
+                .orElseThrow(() -> new ClienteNoEncontrado(dni));
+        if (!dni.equals(dto.getDni())) {
+            validarUnicidadDni(dto.getDni(), usuarioAsociado.getIdUsuario());
+        }
         validarEdadMinima(dto.getFechaNacimiento());
-        validarUnicidad(dto.getDni(), id);
+        if (!usuarioAsociado.getIdUsuario().equals(dto.getIdUsuarioCreador())) {
+            throw new UsuarioNoAutorizado("No tienes permiso para cambiar el ID de usuario asociado.");
+        }
 
-        UsuarioModel usuarioCreador = usuarioService.obtenerPorId(dto.getIdUsuarioCreador())
-                .orElseThrow(() -> new UsuarioNoAutorizado("Usuario creador no válido."));
+        clienteExistente.setDni(dto.getDni());
+        clienteExistente.setNombre(dto.getNombre());
+        clienteExistente.setApellido(dto.getApellido());
+        clienteExistente.setTelefono(dto.getTelefono());
+        clienteExistente.setDireccion(dto.getDireccion());
+        clienteExistente.setFechaNacimiento(dto.getFechaNacimiento());
+        clienteExistente.setGenero(dto.getGenero());
 
-        existente.setDni(dto.getDni());
-        existente.setNombre(dto.getNombre());
-        existente.setApellido(dto.getApellido());
-        existente.setTelefono(dto.getTelefono());
-        existente.setDireccion(dto.getDireccion());
-        existente.setFechaNacimiento(dto.getFechaNacimiento());
-        existente.setGenero(dto.getGenero());
-        existente.setUsuario(usuarioCreador);
+        usuarioAsociado.setDni(dto.getDni());
+        usuarioAsociado.setNombre(dto.getNombre());
+        usuarioAsociado.setApellido(dto.getApellido());
+        usuarioAsociado.setTelefono(dto.getTelefono());
+        usuarioAsociado.setFechaNacimiento(dto.getFechaNacimiento());
 
-        ClienteModel guardado = clienteRepository.save(existente);
-        return toDTO(guardado, usuarioCreador);
+        usuarioRepository.save(usuarioAsociado);
+        ClienteModel guardado = clienteRepository.save(clienteExistente);
+        return toDTO(guardado, usuarioAsociado);
     }
 
-    @Override
-    public void eliminar(Long id) {
-        if (!clienteRepository.existsById(id)) {
-            throw new ClienteNoEncontrado(id);
+
+@Override
+    public void eliminar(String dni) {
+        ClienteModel cliente = obtenerPorIdOrThrow(dni);
+        UsuarioModel usuarioAsociado = cliente.getUsuario();
+        if (usuarioAsociado != null) {
+            usuarioAsociado.setEstado(EstadoUsuario.INACTIVO);
+            usuarioRepository.save(usuarioAsociado);
         }
-        clienteRepository.deleteById(id);
+        clienteRepository.delete(cliente);
     }
 
     @Override
     public boolean existePorDni(String dni) {
         return clienteRepository.existsByDni(dni);
+    }
+
+    @Override
+    @Transactional(readOnly = true) // 💡 Marcado como solo lectura
+    public Optional<ClienteModel> obtenerClientePorDni(String dni) {
+
+        // Asumimos que el UsuarioModel tiene una relación @OneToOne con ClienteModel.
+
+        return clienteRepository.findByDni(dni);
     }
 
     private void validarEdadMinima(LocalDate fechaNacimiento) {
@@ -124,22 +123,16 @@ public class ClienteServiceImpl implements ClienteService {
             throw new IllegalArgumentException("El cliente debe tener al menos 16 años.");
         }
     }
-    private UsuarioModel validarUsuarioCreador(Long idUsuario) {
-        Optional<UsuarioModel> usuarioOpt = usuarioService.obtenerPorId(idUsuario);
-        if (usuarioOpt.isEmpty() || !usuarioOpt.get().isActivo()) {
-            throw new UsuarioNoAutorizado("El usuario creador no existe o está inactivo.");
+    private void validarUnicidadDni(String dni, Long idUsuarioExcluido) {
+        // Usamos el repositorio de Usuario porque garantiza la unicidad para la cuenta.
+        if (usuarioRepository.existsByDniAndIdUsuarioNot(dni, idUsuarioExcluido)) {
+            throw new ClienteDniDuplicado(dni);
         }
-
-        UsuarioModel usuario = usuarioOpt.get();
-        if (usuario.getRoles() != Roles.ADMIN && usuario.getRoles() != Roles.RECEPCIONISTA) {
-            throw new UsuarioNoAutorizado("Solo los roles ADMIN o RECEPCIONISTA pueden registrar clientes.");
-        }
-        return usuario;
     }
 
-    private ClienteModel obtenerPorIdOrThrow(Long id) {
-        return clienteRepository.findById(id)
-                .orElseThrow(() -> new ClienteNoEncontrado(id));
+    private ClienteModel obtenerPorIdOrThrow(String dni) {
+        return clienteRepository.findByDni(dni)
+                .orElseThrow(() -> new ClienteNoEncontrado(dni));
     }
 
     private void validarUnicidad(String dni, Long idCliente) {
@@ -149,7 +142,7 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
-    private ClienteDTO toDTO(ClienteModel cliente, UsuarioModel usuarioCreador) {
+    private ClienteDTO toDTO(ClienteModel cliente, UsuarioModel usuarioAsociado) {
         ClienteDTO dto = new ClienteDTO();
         dto.setIdCliente(cliente.getIdCliente());
         dto.setDni(cliente.getDni());
@@ -159,8 +152,9 @@ public class ClienteServiceImpl implements ClienteService {
         dto.setDireccion(cliente.getDireccion());
         dto.setFechaNacimiento(cliente.getFechaNacimiento());
         dto.setGenero(cliente.getGenero());
-        dto.setIdUsuarioCreador(usuarioCreador.getIdUsuario());
-        dto.setNombreUsuarioCreador(usuarioCreador.getNombre() + " " + usuarioCreador.getApellido());
+        dto.setIdUsuarioCreador(usuarioAsociado.getIdUsuario());
+        dto.setNombreUsuarioCreador(usuarioAsociado.getNombre() + " " + usuarioAsociado.getApellido());
         return dto;
+
     }
 }

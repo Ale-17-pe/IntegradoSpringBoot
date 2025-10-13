@@ -54,7 +54,7 @@
                 return ResponseEntity.internalServerError().body(errorResponse("Error interno: " + e.getMessage()));
             }
         }
-        @PostMapping("/registrar")
+        @PostMapping("/registro")
         public ResponseEntity<?> registrar(@Valid @RequestBody RegistrarClienteDTO dto) {
             try {
                 registrarNuevoCliente.ejecutar(dto);
@@ -64,31 +64,8 @@
             }
         }
 
-        @PutMapping("/{id}")
-        public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody ClienteActualizacionDTO dto) {
-            try {
-                ClienteDTO actualizado = clienteService.actualizar(id, dto);
-                return ResponseEntity.ok(actualizado);
-            } catch (ClienteNoEncontrado e) {
-                return ResponseEntity.notFound().build();
-            } catch (ClienteDniDuplicado | UsuarioNoAutorizado e) {
-                return ResponseEntity.badRequest().body(errorResponse(e.getMessage()));
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body(errorResponse("Validación: " + e.getMessage()));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError().body(errorResponse("Error interno: " + e.getMessage()));
-            }
-        }
 
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-            try {
-                clienteService.eliminar(id);
-                return ResponseEntity.noContent().build();
-            } catch (ClienteNoEncontrado e) {
-                return ResponseEntity.notFound().build();
-            }
-        }
+
 
         private Map<String, String> errorResponse(String mensaje) {
             Map<String, String> response = new HashMap<>();
