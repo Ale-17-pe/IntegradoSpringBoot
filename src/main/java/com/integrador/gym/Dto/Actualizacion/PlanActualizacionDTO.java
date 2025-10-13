@@ -1,6 +1,7 @@
 package com.integrador.gym.Dto.Actualizacion;
 
 import com.integrador.gym.Model.Enum.EstadoPlan;
+import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,6 +11,9 @@ import java.math.BigDecimal;
 
 @Setter @Getter
 public class PlanActualizacionDTO {
+
+    @Id
+    private Long idPlan;
     @NotBlank(message = "El nombre del plan es obligatorio")
     @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
     private String nombre;

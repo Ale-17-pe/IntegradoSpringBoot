@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - AresFitness</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-primario: #d82c2c;
+            --color-primario-hover: #b82424;
+            --color-secundario: #ffd500;
+            --color-secundario-hover: #ffdf40;
+            --color-fondo: #0f0e0d;
+            --color-fondo-card: rgba(30, 30, 30, 0.9);
+            --color-texto: #ffffff;
+            --color-texto-secundario: #b0b0b0;
+            --color-bordes: rgba(255, 213, 0, 0.3);
+            --sombra: 0 10px 30px rgba(0, 0, 0, 0.6);
+            --sombra-hover: 0 15px 40px rgba(0, 0, 0, 0.7);
+            --gradiente-dorado: linear-gradient(135deg, #ffd500, #ffed4e);
+            --gradiente-rojo: linear-gradient(135deg, #d82c2c, #ff5252);
+            --gradiente-verde: linear-gradient(135deg, #06d6a0, #1b9aaa);
+            --gradiente-azul: linear-gradient(135deg, #118ab2, #073b4c);
+            --gradiente-purpura: linear-gradient(135deg, #7209b7, #560bad);
+            --gradiente-negro: linear-gradient(135deg, #1a1a1a, #0f0e0d);
+            --transicion: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 280px;
+            --header-height: 80px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradiente-negro);
+            color: var(--color-texto);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--gradiente-negro);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--color-bordes);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transicion);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-header {
+            padding: 30px 20px 20px;
+            border-bottom: 1px solid var(--color-bordes);
+            text-align: center;
+            background: rgba(216, 44, 44, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            transition: var(--transicion);
+        }
+
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-container img {
+            height: 50px;
+            transition: var(--transicion);
+        }
+
+        .logo-container img:hover {
+            filter: drop-shadow(0 0 8px rgba(255, 213, 0, 0.4));
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 213, 0, 0.3);
+        }
+
+        .sidebar-header p {
+            color: var(--color-texto-secundario);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--color-texto-secundario);
+            text-decoration: none;
+            transition: var(--transicion);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item a:hover {
+            background: rgba(255, 213, 0, 0.1);
+            color: var(--color-texto);
+            border-left-color: var(--color-secundario);
+        }
+
+        .nav-item.active a {
+            background: rgba(216, 44, 44, 0.15);
+            color: var(--color-texto);
+            border-left-color: var(--color-primario);
+        }
+
+        .nav-item .icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--color-bordes);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradiente-rojo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            box-shadow: 0 0 10px rgba(216, 44, 44, 0.5);
+        }
+
+        .user-details .user-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .user-details .user-role {
+            font-size: 0.8rem;
+            color: var(--color-texto-secundario);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 15px;
+            background: var(--gradiente-rojo);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transicion);
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(216, 44, 44, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: var(--color-primario-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(216, 44, 44, 0.4);
+        }
+
+        .logout-btn .icon {
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--color-bordes);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--header-height);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 213, 0, 0.2);
+        }
+
+        .header-content p {
+            color: var(--color-texto-secundario);
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--color-texto);
+            font-size: 1.2rem;
+            margin-right: 25px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: var(--transicion);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 213, 0, 0.2);
+            transform: rotate(15deg);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--gradiente-rojo);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 5px rgba(216, 44, 44, 0.7);
+        }
+
+        .quick-stats {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px 15px;
+            border: 1px solid var(--color-bordes);
+        }
+
+        .stat {
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .stat:not(:last-child) {
+            border-right: 1px solid var(--color-bordes);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-texto-secundario);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--color-bordes);
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 213, 0, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-bordes);
+            margin-left: 15px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* Module Card Styles */
+        .module-card {
+            background: var(--color-fondo-card);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--sombra);
+            transition: var(--transicion);
+            border: 1px solid var(--color-bordes);
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradiente-dorado);
+            z-index: 2;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sombra-hover);
+            border-color: rgba(255, 213, 0, 0.5);
+        }
+
+        .card-header {
+            padding: 20px 20px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--color-bordes);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-icon {
+            background: var(--gradiente-azul);
+        }
+
+        .plan-icon {
+            background: var(--gradiente-verde);
+        }
+
+        .operation-icon {
+            background: var(--gradiente-purpura);
+        }
+
+        .report-icon {
+            background: var(--gradiente-rojo);
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content p {
+            color: var(--color-texto-secundario);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .card-links {
+            list-style: none;
+        }
+
+        .card-links li {
+            margin-bottom: 12px;
+        }
+
+        .card-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--color-texto);
+            transition: var(--transicion);
+            border: 1px solid transparent;
+        }
+
+        .card-link:hover {
+            background: rgba(255, 213, 0, 0.1);
+            border-color: var(--color-bordes);
+            transform: translateX(5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .link-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--color-bordes);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-stats {
+            font-size: 0.85rem;
+            color: var(--color-texto-secundario);
+        }
+
+        .card-badge {
+            background: var(--gradiente-rojo);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .module-card {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .module-card:nth-child(2) { animation-delay: 0.1s; }
+        .module-card:nth-child(3) { animation-delay: 0.2s; }
+        .module-card:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .module-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+                padding: 15px 20px;
+            }
+
+            .header-actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <a th:href="@{/}">
+                    <img th:src="@{/Imagenes/logo.png}" alt="Logo AresFitness">
+                </a>
+            </div>
+            <h1>AresFitness</h1>
+            <p>Panel de Administración</p>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item active">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-users"></i></span>
+                        <span>Gestión de Usuarios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-credit-card"></i></span>
+                        <span>Planes y Membresías</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                        <span>Operaciones y Clases</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                        <span>Reportes y Estadísticas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <span class="icon"><i class="fas fa-cogs"></i></span>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div class="user-details">
+                    <p class="user-name">Administrador</p>
+                    <p class="user-role">Super Admin</p>
+                </div>
+            </div>
+            <a href="@{/logaut}" class="logout-btn">
+                <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Panel de Administración</h1>
+                <p>Gestiona usuarios, planes y operaciones del gimnasio</p>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <h2 class="section-title">Módulos de Gestión</h2>
+
+            <div class="module-grid">
+                <!-- Gestión de Usuarios -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon user-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h2>Gestión de Usuarios</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Administra los usuarios del sistema: clientes, entrenadores y administradores.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a th:href="@{/admin/usuarios/crear}" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-plus"></i></span>
+                                    <span>Crear Nuevo Usuario</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-list"></i></span>
+                                    <span>Listar y Editar Usuarios</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-key"></i></span>
+                                    <span>Resetear Contraseñas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">Última actualización: Hoy</span>
+                        <span class="card-badge">ACTIVO</span>
+                    </div>
+                </div>
+
+                <!-- Planes y Membresías -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon plan-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h2>Planes y Membresías</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Gestiona los planes de suscripción y membresías disponibles para los clientes.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a th:href="@{/admin/planes/crear}" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-plus"></i></span>
+                                    <span>Crear Nuevo Plan</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-list"></i></span>
+                                    <span>Listar y Editar Planes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-search"></i></span>
+                                    <span>Revisar Membresías Activas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">12 planes activos</span>
+                        <span class="card-badge">NUEVO</span>
+                    </div>
+                </div>
+
+                <!-- Operaciones y Clases -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon operation-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h2>Operaciones y Clases</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Organiza horarios, asigna entrenadores y gestiona las actividades del gimnasio.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-calendar"></i></span>
+                                    <span>Gestionar Horarios de Clases</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-user-tie"></i></span>
+                                    <span>Asignar Entrenadores</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-chart-bar"></i></span>
+                                    <span>Reportes de Asistencia</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">15 clases esta semana</span>
+                        <span class="card-badge">POPULAR</span>
+                    </div>
+                </div>
+
+                <!-- Reportes y Estadísticas -->
+                <div class="module-card">
+                    <div class="card-header">
+                        <div class="card-icon report-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h2>Reportes y Estadísticas</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>Analiza el rendimiento del gimnasio con reportes detallados y métricas clave.</p>
+                        <ul class="card-links">
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-chart-line"></i></span>
+                                    <span>Estadísticas de Ingresos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-users"></i></span>
+                                    <span>Reporte de Asistencia</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="card-link">
+                                    <span class="link-icon"><i class="fas fa-file-alt"></i></span>
+                                    <span>Reportes Personalizados</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-stats">+15% ingresos este mes</span>
+                        <span class="card-badge">ÉXITO</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Efectos de animación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar efecto de aparición escalonada a las tarjetas
+        const cards = document.querySelectorAll('.module-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Efecto de notificación
+        const notificationBtn = document.querySelector('.notification-btn');
+        notificationBtn.addEventListener('click', function() {
+            this.style.transform = 'rotate(15deg)';
+            setTimeout(() => {
+                this.style.transform = 'rotate(0)';
+            }, 300);
+        });
+    });
+</script>
+</body>
+</html>

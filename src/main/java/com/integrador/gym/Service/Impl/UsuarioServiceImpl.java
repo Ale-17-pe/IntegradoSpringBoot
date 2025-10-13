@@ -47,8 +47,12 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
 
     @Override
-    public List<UsuarioModel> listarTodos() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> listarTodos() {
+        List<UsuarioModel> usuarios = usuarioRepository.findAll();
+
+        return usuarios.stream()
+                .map(this::toDTO)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -126,10 +130,6 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         existente.setApellido(dto.getApellido());
         existente.setEmail(dto.getEmail());
 
-        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            existente.setPassword(dto.getPassword());
-        }
-
         existente.setTelefono(dto.getTelefono());
         existente.setRoles(dto.getRoles());
         existente.setFechaNacimiento(dto.getFechaNacimiento());
@@ -147,6 +147,25 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         }
         usuarioRepository.deleteById(id);
     }
+
+    @Override
+    public UsuarioActualizacionDTO obtenerDTOParaEdicion(Long id) {
+        UsuarioModel usuario = obtenerPorIdOrThrow(id);
+
+        UsuarioActualizacionDTO dto = new UsuarioActualizacionDTO();
+
+        dto.setIdUsuario(usuario.getIdUsuario());
+        dto.setDni(usuario.getDni());
+        dto.setNombre(usuario.getNombre());
+        dto.setApellido(usuario.getApellido());
+        dto.setEmail(usuario.getEmail());
+        dto.setTelefono(usuario.getTelefono());
+        dto.setRoles(usuario.getRoles());
+        dto.setFechaNacimiento(usuario.getFechaNacimiento());
+
+        return dto;
+    }
+
     private void validarEdadMinima(LocalDate fechaNacimiento) {
         int edad = Period.between(fechaNacimiento, LocalDate.now()).getYears();
         if (edad < 16) {

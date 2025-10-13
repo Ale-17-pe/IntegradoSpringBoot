@@ -23,12 +23,12 @@ public class PlanController {
     private PlanService planService;
 
     @GetMapping
-    public List<PlanModel> listarTodos() {
+    public List<PlanDTO> listarTodos() {
         return planService.listarTodos();
     }
 
     @GetMapping("/activos")
-    public List<PlanModel> listarActivos() {
+    public List<PlanDTO> listarActivos() {
         return planService.listarActivos();
     }
 

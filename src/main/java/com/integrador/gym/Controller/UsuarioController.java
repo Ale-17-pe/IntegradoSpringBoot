@@ -31,7 +31,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public List<UsuarioModel> listar() {
+    public List<UsuarioDTO> listar() {
         return usuarioService.listarTodos();
     }
 

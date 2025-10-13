@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Crear Nuevo Plan - Panel Admin</title>
-    <link rel="stylesheet" th:href="@{Css/CrearPlan.css}">
+    <link rel="stylesheet" th:href="@{/Css/CrearPlan.css}">
     <link th:href="@{Imagenes/logo.png}" rel="icon" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<!-- Header -->
 <header>
     <div class="logo-container">
-        <a th:href="@{/}">
+        <a>
             <img th:src="@{/Imagenes/logo.png}" alt="Logo AresFitness">
         </a>
-        <div class="logo-text">
-            <h1>AresFitness</h1>
-            <p>Panel de Administración</p>
-        </div>
     </div>
     <nav>
-        <a th:href="@{/admin/dashboard-admin}">
+        <a th:href="@{/admin/dashboard}">
             <i class="fas fa-arrow-left"></i>
             Volver al Panel
         </a>
@@ -138,7 +133,7 @@
                     <i class="fas fa-save"></i>
                     Guardar Plan
                 </button>
-                <a th:href="@{/admin/dashboard-admin}" class="btn-back">
+                <a th:href="@{/admin/dashboard}" class="btn-back">
                     <i class="fas fa-times"></i>
                     Cancelar
                 </a>

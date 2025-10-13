@@ -35,28 +35,22 @@
         @GetMapping("/dashboard")
         public String mostrarDashboard(Authentication authentication, Model model) {
 
-            // 1. Obtener la identidad (DNI) y el rol de la sesión de Spring Security
             String dniUsuario = authentication.getName();
             String rol = authentication.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
-
-            // 2. Intentar obtener el nombre completo del cliente (para el saludo personalizado)
             ClienteModel cliente = clienteService.obtenerClientePorDni(dniUsuario).orElse(null);
 
             String nombreUsuario;
             if (cliente != null) {
                 nombreUsuario = cliente.getNombre();
             } else {
-                // Fallback si no hay registro de cliente, usamos el DNI o un nombre genérico.
                 nombreUsuario = "Usuario";
             }
 
-            // 3. Pasar los datos esenciales a la vista
             model.addAttribute("nombre", nombreUsuario);
             model.addAttribute("rol", rol);
 
-            // Dependiendo del rol, puedes redirigir a vistas diferentes.
             if (rol.equals("ADMIN")) {
-                return "/admin/dashboard-admin";
+                return "admin/dashboard-admin";
             } else if (rol.equals("ENTRENADOR")) {
                 return "dashboard-entrenador";
             } else {

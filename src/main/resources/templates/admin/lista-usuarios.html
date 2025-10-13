@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuarios - Panel Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f2f5; }
+        .container { max-width: 90%; margin: 30px auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;}
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-crear { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; color: #343a40; }
+        .btn-editar { background-color: #ffc107; color: #343a40; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 0.9em;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <h1>👥 Lista de Usuarios del Sistema</h1>
+        <a th:href="@{/admin/usuarios/crear}" class="btn-crear">➕ Crear Nuevo Usuario</a>
+    </div>
+
+    <div th:if="${success}" class="success-alert" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        <p th:text="${success}"></p>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>DNI</th>
+            <th>Nombre Completo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.id}">1</td>
+            <td th:text="${usuario.dni}">12345678</td>
+            <td>
+                <span th:text="${usuario.nombre}"></span>
+                <span th:text="${usuario.apellido}"></span>
+            </td>
+            <td th:text="${usuario.roles}">CLIENTE</td>
+            <td>
+                <span th:if="${usuario.estado == 'ACTIVO'}" style="color: green; font-weight: bold;" th:text="${usuario.estado}">ACTIVO</span>
+                <span th:unless="${usuario.estado == 'ACTIVO'}" style="color: red;" th:text="${usuario.estado}">INACTIVO</span>
+            </td>
+            <td>
+                <a th:href="@{/admin/usuarios/editar/{id}(id=${usuario.id})}" class="btn-editar">Editar</a>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="6" style="text-align: center; color: #6c757d;">No hay usuarios registrados en el sistema.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p style="margin-top: 20px;">
+        <a th:href="@{/admin/dashboard}">Volver al Dashboard</a>
+    </p>
+</div>
+
+</body>
+</html>

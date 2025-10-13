@@ -24,9 +24,9 @@ public class LoggingUsuarioService implements UsuarioService {
         this.delegate = delegate;
     }
     @Override
-    public List<UsuarioModel> listarTodos() {
+    public List<UsuarioDTO> listarTodos() {
         System.out.println("[LOG]: Listando todos los usuarios...");
-        List<UsuarioModel> usuarios = delegate.listarTodos();
+        List<UsuarioDTO> usuarios = delegate.listarTodos();
         System.out.println("[LOG] Total encontrados: " + usuarios.size());
         return usuarios;
     }
@@ -62,5 +62,10 @@ public class LoggingUsuarioService implements UsuarioService {
         System.out.println("LOG: Eliminando usuario con ID " + id);
         delegate.eliminar(id);
         System.out.println("[LOG] Usuario eliminado correctamente.");
+    }
+
+    @Override
+    public UsuarioActualizacionDTO obtenerDTOParaEdicion(Long id) {
+        return null;
     }
 }

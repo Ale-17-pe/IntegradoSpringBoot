@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Editar Plan - ' + ${planDTO.nombre} + ' - Panel Admin'"></title>
+    <link rel="stylesheet" th:href="@{/Css/CrearPlan.css}">
+    <link th:href="@{/Imagenes/logo.png}" rel="icon" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<header>
+    <nav>
+        <a th:href="@{/admin/planes}">
+            <i class="fas fa-arrow-left"></i>
+            Volver a la Lista de Planes
+        </a>
+    </nav>
+</header>
+
+<div class="main-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 th:text="'Editar Plan: ' + ${planDTO.nombre}">Editar Plan</h1>
+            <p>Modifique los detalles del plan de membresía.</p>
+        </div>
+
+        <div th:if="${success}" class="success-alert">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/admin/planes/editar/{id}(id=${planDTO.id})}"
+              th:object="${planDTO}"
+              method="post">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="input-group">
+                <label for="nombre">Nombre del Plan</label>
+                <input type="text" id="nombre" th:field="*{nombre}" placeholder="Ej: Plan Premium Mensual" required/>
+                <div class="input-icon"><i class="fas fa-tag"></i></div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('nombre')}">
+                    <i class="fas fa-exclamation-circle"></i><span th:errors="*{nombre}"></span>
+                </p>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="precio">Precio ($)</label>
+                    <input type="number" id="precio" th:field="*{precio}" step="0.01" placeholder="0.00" min="0" required/>
+                    <div class="input-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <p class="error-message-field" th:if="${#fields.hasErrors('precio')}">
+                        <i class="fas fa-exclamation-circle"></i><span th:errors="*{precio}"></span>
+                    </p>
+                </div>
+
+                <div class="input-group">
+                    <label for="duracionDias">Duración (Días)</label>
+                    <input type="number" id="duracionDias" th:field="*{duracionDias}" placeholder="30" min="1" required/>
+                    <div class="input-icon"><i class="fas fa-calendar-day"></i></div>
+                    <p class="error-message-field" th:if="${#fields.hasErrors('duracionDias')}">
+                        <i class="fas fa-exclamation-circle"></i><span th:errors="*{duracionDias}"></span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="estado">Estado</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option value="" disabled>Seleccione un estado</option>
+                    <option th:each="estado : ${T(com.integrador.gym.Model.Enum.EstadoPlan).values()}"
+                            th:value="${estado}"
+                            th:text="${estado.name()}">
+                    </option>
+                </select>
+                <div class="input-icon"><i class="fas fa-toggle-on"></i></div>
+                <p class="error-message-field" th:if="${#fields.hasErrors('estado')}">
+                    <i class="fas fa-exclamation-circle"></i><span th:errors="*{estado}"></span>
+                </p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i>
+                    Guardar Cambios
+                </button>
+                <a th:href="@{/admin/planes}" class="btn-back">
+                    <i class="fas fa-times"></i>
+                    Cancelar Edición
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.integrador.gym.Repository;
 
+import com.integrador.gym.Dto.PlanDTO;
 import com.integrador.gym.Model.Enum.EstadoPlan;
 import com.integrador.gym.Model.PlanModel;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,5 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<PlanModel, Long> {
     boolean existsByNombre(String nombre);
     boolean existsByNombreAndIdPlanNot(String nombre, Long id);
-
-    List<PlanModel> findByEstado(EstadoPlan estado);
+    List<PlanDTO> findByEstado(EstadoPlan estado);
 }

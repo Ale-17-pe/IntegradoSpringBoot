@@ -1,6 +1,7 @@
 package com.integrador.gym.Dto.Actualizacion;
 
 import com.integrador.gym.Model.Enum.Roles;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,9 @@ import java.time.LocalDate;
 
 @Setter @Getter
 public class UsuarioActualizacionDTO {
+
+    @Id
+    private Long idUsuario;
     @NotBlank(message = "DNI es obligatorio")
     @Pattern(regexp = "\\d{7,8}", message = "DNI debe tener 7 u 8 dígitos")
     private String dni;

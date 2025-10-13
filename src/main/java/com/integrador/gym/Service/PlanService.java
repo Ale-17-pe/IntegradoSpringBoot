@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface    PlanService {
-    List<PlanModel> listarTodos();
-    List<PlanModel> listarActivos();
+    List<PlanDTO> listarTodos();
+    List<PlanDTO> listarActivos();
     Optional<PlanModel> obtenerPorId(Long id);
     PlanDTO crear(PlanCreacionDTO dto);
     PlanDTO actualizar(Long id, PlanActualizacionDTO dto);
     void eliminar(Long id);
+    PlanActualizacionDTO obtenerDTOParaEdicion(Long id);
+
 }

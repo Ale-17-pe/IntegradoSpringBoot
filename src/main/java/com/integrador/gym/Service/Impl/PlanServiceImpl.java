@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,12 +32,16 @@ public class PlanServiceImpl implements PlanService {
     private PlanFactory planFactory;
 
     @Override
-    public List<PlanModel> listarTodos() {
-        return planRepository.findAll();
+    public List<PlanDTO> listarTodos() {
+        List<PlanModel> planes = planRepository.findAll();
+
+        return planes.stream()
+                .map(this::toDTO) // Reutilizamos tu método toDTO
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<PlanModel> listarActivos() {
+    public List<PlanDTO> listarActivos() {
         return planRepository.findByEstado(EstadoPlan.ACTIVO);
     }
 
@@ -143,6 +148,21 @@ public class PlanServiceImpl implements PlanService {
         PlanModel plan = obtenerPorIdOrThrow(id);
         plan.setEstado(EstadoPlan.INACTIVO);
         planRepository.save(plan);
+    }
+
+    @Override
+    public PlanActualizacionDTO obtenerDTOParaEdicion(Long id) {
+        PlanModel plan = obtenerPorIdOrThrow(id);
+
+        PlanActualizacionDTO dto = new PlanActualizacionDTO();
+        dto.setIdPlan(plan.getIdPlan());
+        dto.setNombre(plan.getNombre());
+        dto.setDescripcion(plan.getDescripcion());
+        dto.setPrecio(plan.getPrecio());
+        dto.setDuracionDias(plan.getDuracionDias());
+        dto.setBeneficios(plan.getBeneficios());
+        dto.setEstado(plan.getEstado());
+        return null;
     }
 
     private PlanModel obtenerPorIdOrThrow(Long id) {
