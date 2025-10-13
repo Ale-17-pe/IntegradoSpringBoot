@@ -1,10 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Planes-Ares Fitness</title>
+    <link th:href="@{Css/Encabezado.css}" rel="stylesheet">
+    <link th:href="@{Css/index.css}" rel="stylesheet">
+    <link th:href="@{Imagenes/logo.png}" rel="icon" type="image/png">
+    <link rel="stylesheet" th:href="@{/Css/plan.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/}">
+                <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a th:href="@{/ubicacion}"><i class="fas fa-map-marker-alt"></i> UBICACIÓN</a></li>
+                <li><a th:href="@{/ejercicios}"><i class="fas fa-running"></i> EJERCICIOS</a></li>
+                <li><a th:href="@{/planes}"><i class="fas fa-crown"></i> MEMBRESÍAS</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button class="user-btn" id="userMenuBtn">
+                <i class="fas fa-user"></i> Mi Cuenta
+            </button>
+            <div class="auth-dropdown" id="authDropdown" th:if="${session.usuario == null}">
+                <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                <a th:href="@{/registro}"><i class="fas fa-user-plus"></i> Registrarse</a>
+            </div>
+
+            <div class="auth-dropdown" id="" th:if="${session.usuario != null}">
+                <a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+                <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </div>
+</header>
+<section class="hero-section">
+    <h1 class="hero-title">Transforma Tu Vida</h1>
+    <p class="hero-subtitle">Elige el plan perfecto para alcanzar tus metas fitness. Calidad premium a precios accesibles.</p>
+</section>
+<section class="planes-section">
+    <h2 class="section-title">Nuestros Planes de Membresía</h2>
+    <div class="planes-container">
+        <div class="plan-card" th:each="plan : ${planesDisponibles}">
+
+            <h2 th:text="${plan.nombre}">Plan Básico Mensual</h2>
+
+            <p class="plan-descripcion" th:text="${plan.descripcion}">Acceso a máquinas y zonas de cardio.</p>
+
+            <div class="plan-detalles">
+                <p>Duración: <strong th:text="${plan.duracionDias} + ' días'">30 días</strong></p>
+            </div>
+
+            <div class="plan-precio">
+                <span class="precio-moneda">$</span>
+                <span class="precio-valor" th:text="${#numbers.formatDecimal(plan.precio, 0, 'COMMA', 2, 'POINT')}">30.00</span>
+                <span class="precio-frecuencia">/mes</span>
+            </div>
+
+            <a th:href="@{/registro}" class="btn-comprar">¡Inscribirme ahora!</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(planesDisponibles)}">
+            <p>Aún no hay planes de membresía disponibles.</p>
+        </div>
+    </div>
+</section>
+
+<script th:src="@{JS/encabezado.js}"></script>
+
 
 </body>
 </html>

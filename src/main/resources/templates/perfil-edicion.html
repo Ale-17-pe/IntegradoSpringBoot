@@ -2,78 +2,239 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Mi Perfil - AresFitness</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
-        .form-container { max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .error { color: #dc3545; font-size: 0.9em; margin-top: 5px; }
-        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
-        button:hover { background-color: #218838; }
-    </style>
+    <link rel="stylesheet" th:href="@{/Css/perfil-editar.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+<div class="main-container">
+    <!-- Panel Lateral - Preview en Tiempo Real -->
+    <div class="preview-panel">
+        <div class="preview-content">
+            <div class="preview-avatar">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <h2 class="preview-name" id="previewName">Nombre Apellido</h2>
+            <div class="preview-dni" id="previewDni">DNI: 00000000</div>
 
-<div class="form-container">
-    <h1>Editar Perfil</h1>
-    <p>Actualiza tu información personal y de contacto.</p>
+            <div class="preview-stats">
+                <div class="preview-stat">
+                    <div class="stat-label">Edad</div>
+                    <div class="stat-value" id="previewAge">-- años</div>
+                </div>
+                <div class="preview-stat">
+                    <div class="stat-label">Género</div>
+                    <div class="stat-value" id="previewGender">--</div>
+                </div>
+                <div class="preview-stat">
+                    <div class="stat-label">Teléfono</div>
+                    <div class="stat-value" id="previewPhone">--</div>
+                </div>
+                <div class="preview-stat">
+                    <div class="stat-label">Miembro</div>
+                    <div class="stat-value">Activo</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <form th:action="@{/perfil/editar}" th:object="${perfilDTO}" method="post">
-
-        <div class="input-group">
-            <label for="dni">DNI</label>
-            <input type="text" id="dni" th:field="*{dni}" maxlength="8" readonly/>
-            <p class="error" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></p>
+    <!-- Panel del Formulario -->
+    <div class="form-panel">
+        <div class="form-header">
+            <h1>Editar Mi Perfil</h1>
+            <p>Actualiza tu información personal y mantén tu perfil al día</p>
         </div>
 
-        <div class="input-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" th:field="*{nombre}" required/>
-            <p class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></p>
-        </div>
+        <form th:action="@{/perfil/editar}" th:object="${perfilDTO}" method="post">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="dni" class="required">DNI</label>
+                    <input type="text" id="dni" th:field="*{dni}" maxlength="8" readonly/>
+                    <div class="input-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('dni')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{dni}"></span>
+                    </p>
+                </div>
 
-        <div class="input-group">
-            <label for="apellido">Apellido</label>
-            <input type="text" id="apellido" th:field="*{apellido}" required/>
-            <p class="error" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></p>
-        </div>
+                <div class="input-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" th:field="*{telefono}" placeholder="Ej: +51 987654321"/>
+                    <div class="input-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('telefono')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{telefono}"></span>
+                    </p>
+                </div>
+            </div>
 
-        <div class="input-group">
-            <label for="telefono">Teléfono</label>
-            <input type="text" id="telefono" th:field="*{telefono}"/>
-            <p class="error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></p>
-        </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="nombre" class="required">Nombre</label>
+                    <input type="text" id="nombre" th:field="*{nombre}" placeholder="Tu nombre" required/>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('nombre')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{nombre}"></span>
+                    </p>
+                </div>
 
-        <div class="input-group">
-            <label for="fechaNacimiento">Fecha de Nacimiento</label>
-            <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" required/>
-            <p class="error" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></p>
-        </div>
+                <div class="input-group">
+                    <label for="apellido" class="required">Apellido</label>
+                    <input type="text" id="apellido" th:field="*{apellido}" placeholder="Tu apellido" required/>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('apellido')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{apellido}"></span>
+                    </p>
+                </div>
+            </div>
 
-        <div class="input-group">
-            <label for="genero">Género</label>
-            <select id="genero" th:field="*{genero}" required>
-                <option th:each="g : ${T(com.integrador.gym.Model.Enum.Genero).values()}"
-                        th:value="${g}"
-                        th:text="${g.name()}">
-                </option>
-            </select>
-            <p class="error" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}"></p>
-        </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="fechaNacimiento" class="required">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" required/>
+                    <div class="input-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('fechaNacimiento')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{fechaNacimiento}"></span>
+                    </p>
+                </div>
 
-        <div class="input-group">
-            <label for="direccion">Dirección</label>
-            <input type="text" id="direccion" th:field="*{direccion}"/>
-            <p class="error" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></p>
-        </div>
+                <div class="input-group">
+                    <label for="genero" class="required">Género</label>
+                    <select id="genero" th:field="*{genero}" required>
+                        <option th:each="g : ${T(com.integrador.gym.Model.Enum.Genero).values()}"
+                                th:value="${g}"
+                                th:text="${g.name()}">
+                        </option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-venus-mars"></i>
+                    </div>
+                    <p class="error-message" th:if="${#fields.hasErrors('genero')}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{genero}"></span>
+                    </p>
+                </div>
+            </div>
 
-        <button type="submit">Guardar Cambios</button>
-        <a th:href="@{/perfil}" style="margin-left: 15px; color: #6c757d;">Cancelar</a>
-    </form>
+            <div class="input-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" th:field="*{direccion}" placeholder="Calle, número, ciudad, país"/>
+                <div class="input-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <p class="error-message" th:if="${#fields.hasErrors('direccion')}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:errors="*{direccion}"></span>
+                </p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i>
+                    Guardar Cambios
+                </button>
+                <a th:href="@{/perfil}" class="btn-cancel">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
+<script>
+    // Preview en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        const nombreInput = document.getElementById('nombre');
+        const apellidoInput = document.getElementById('apellido');
+        const dniInput = document.getElementById('dni');
+        const telefonoInput = document.getElementById('telefono');
+        const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+        const generoInput = document.getElementById('genero');
+        const direccionInput = document.getElementById('direccion');
+
+        const previewName = document.getElementById('previewName');
+        const previewDni = document.getElementById('previewDni');
+        const previewAge = document.getElementById('previewAge');
+        const previewGender = document.getElementById('previewGender');
+        const previewPhone = document.getElementById('previewPhone');
+
+        function updatePreview() {
+            // Nombre completo
+            const nombre = nombreInput.value || 'Nombre';
+            const apellido = apellidoInput.value || 'Apellido';
+            previewName.textContent = `${nombre} ${apellido}`;
+
+            // DNI
+            const dni = dniInput.value || '00000000';
+            previewDni.textContent = `DNI: ${dni}`;
+
+            // Teléfono
+            const telefono = telefonoInput.value || 'No especificado';
+            previewPhone.textContent = telefono;
+
+            // Género
+            const genero = generoInput.options[generoInput.selectedIndex].text;
+            previewGender.textContent = genero;
+
+            // Edad
+            if (fechaNacimientoInput.value) {
+                const birthDate = new Date(fechaNacimientoInput.value);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                previewAge.textContent = `${age} años`;
+            } else {
+                previewAge.textContent = '-- años';
+            }
+        }
+
+        // Event listeners para actualización en tiempo real
+        nombreInput.addEventListener('input', updatePreview);
+        apellidoInput.addEventListener('input', updatePreview);
+        dniInput.addEventListener('input', updatePreview);
+        telefonoInput.addEventListener('input', updatePreview);
+        fechaNacimientoInput.addEventListener('change', updatePreview);
+        generoInput.addEventListener('change', updatePreview);
+
+        // Inicializar preview con valores actuales
+        updatePreview();
+
+        // Efectos de animación en los campos
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Validación en tiempo real para teléfono
+        telefonoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9+\-\s()]/g, '');
+        });
+    });
+</script>
 </body>
 </html>

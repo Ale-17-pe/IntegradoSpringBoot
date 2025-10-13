@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="AresFitness - Transforma tu vida con el mejor gimnasio. Instalaciones modernas, entrenadores profesionales y planes personalizados.">
     <title>AresFitness</title>
-
     <link th:href="@{Css/index.css}" rel="stylesheet">
     <link th:href="@{Css/Encabezado.css}" rel="stylesheet">
     <link th:href="@{Imagenes/logo.png}" rel="icon" type="image/png">
-
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-<!-- Header -->
 <header class="main-header">
     <div class="header-container">
         <div class="logo-container">
@@ -23,20 +19,17 @@
                 <img th:src="@{Imagenes/logo.png}" alt="Logo AresFitness">
             </a>
         </div>
-
         <nav class="main-nav">
             <ul>
                 <li><a th:href="@{/ubicacion}"><i class="fas fa-map-marker-alt"></i> UBICACIÓN</a></li>
                 <li><a th:href="@{/ejercicios}"><i class="fas fa-running"></i> EJERCICIOS</a></li>
-                <li><a th:href="@{/membresias}"><i class="fas fa-crown"></i> MEMBRESÍAS</a></li>
+                <li><a th:href="@{/planes}"><i class="fas fa-crown"></i> MEMBRESÍAS</a></li>
             </ul>
         </nav>
-
         <div class="header-actions">
             <button class="user-btn" id="userMenuBtn">
                 <i class="fas fa-user"></i> Mi Cuenta
             </button>
-
             <div class="auth-dropdown" id="authDropdown" th:if="${session.usuario == null}">
                 <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
                 <a th:href="@{/registro}"><i class="fas fa-user-plus"></i> Registrarse</a>
@@ -46,7 +39,6 @@
                 <a th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a>
                 <a th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
-
             <div class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
             </div>

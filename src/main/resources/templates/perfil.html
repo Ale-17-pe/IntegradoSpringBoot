@@ -2,60 +2,703 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${cliente.nombre} + ' - Mi Perfil'"></title>
+    <link rel="icon" th:href="@{Imagenes/logo.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/Css/perfil.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* (Tus estilos CSS aquí, usando el ejemplo anterior para claridad) */
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
-        .perfil-card { max-width: 800px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px; }
-        .data-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 20px; }
-        .data-grid dt { font-weight: bold; color: #555; }
-        .data-grid dd { margin-left: 0; color: #333; }
-        .rol-tag { display: inline-block; padding: 5px 10px; border-radius: 5px; background-color: #28a745; color: white; font-weight: bold; }
-        .alert-success { padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 20px; }
-        .action-buttons a { text-decoration: none; margin-right: 15px; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
-        .edit-button { background-color: #ffc107; color: #343a40; }
+        :root {
+            --color-primario: #d82c2c;
+            --color-primario-hover: #b82424;
+            --color-secundario: #ffd500;
+            --color-secundario-hover: #ffdf40;
+            --color-fondo: #0f0e0d;
+            --color-fondo-card: rgba(30, 30, 30, 0.9);
+            --color-texto: #ffffff;
+            --color-texto-secundario: #b0b0b0;
+            --color-bordes: rgba(255, 213, 0, 0.3);
+            --sombra: 0 10px 30px rgba(0, 0, 0, 0.6);
+            --sombra-hover: 0 15px 40px rgba(0, 0, 0, 0.7);
+            --gradiente-dorado: linear-gradient(135deg, #ffd500, #ffed4e);
+            --gradiente-rojo: linear-gradient(135deg, #d82c2c, #ff5252);
+            --gradiente-verde: linear-gradient(135deg, #06d6a0, #1b9aaa);
+            --gradiente-azul: linear-gradient(135deg, #118ab2, #073b4c);
+            --gradiente-purpura: linear-gradient(135deg, #7209b7, #560bad);
+            --gradiente-negro: linear-gradient(135deg, #1a1a1a, #0f0e0d);
+            --transicion: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: var(--color-texto);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .main-header {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--color-bordes);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-container img {
+            height: 50px;
+            transition: var(--transicion);
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 8px rgba(255, 213, 0, 0.4));
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-header {
+            background: var(--gradiente-rojo);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(216, 44, 44, 0.3);
+        }
+
+        .btn-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216, 44, 44, 0.4);
+        }
+
+        /* Profile Hero */
+        .profile-hero {
+            background: linear-gradient(rgba(15, 14, 13, 0.8), rgba(15, 14, 13, 0.9)),
+            url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradiente-rojo);
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            background: var(--gradiente-dorado);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3rem;
+            color: #000;
+            box-shadow: 0 8px 25px rgba(255, 213, 0, 0.4);
+            border: 4px solid var(--color-texto);
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .rol-tag {
+            background: var(--gradiente-rojo);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(216, 44, 44, 0.3);
+        }
+
+        /* Alert */
+        .alert-success {
+            padding: 15px 20px;
+            background: rgba(21, 87, 36, 0.2);
+            color: #4ade80;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar */
+        .profile-sidebar {
+            background: var(--color-fondo-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--sombra);
+            border: 1px solid var(--color-bordes);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-title {
+            color: var(--color-secundario);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--color-bordes);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-secundario);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-texto-secundario);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--color-texto);
+            transition: var(--transicion);
+            border: 1px solid transparent;
+        }
+
+        .quick-action:hover {
+            background: rgba(255, 213, 0, 0.1);
+            border-color: var(--color-bordes);
+            transform: translateX(5px);
+        }
+
+        .quick-action i {
+            color: var(--color-secundario);
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .profile-content {
+            background: var(--color-fondo-card);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--sombra);
+            border: 1px solid var(--color-bordes);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: var(--color-secundario);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: var(--color-bordes);
+            margin-left: 10px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--color-bordes);
+            transition: var(--transicion);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradiente-dorado);
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .data-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradiente-azul);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .data-label {
+            color: var(--color-texto-secundario);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .data-value {
+            color: var(--color-texto);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .data-value.empty {
+            color: var(--color-texto-secundario);
+            font-style: italic;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gradiente-rojo);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(216, 44, 44, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--gradiente-rojo);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(216, 44, 44, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-secundario);
+            padding: 15px 30px;
+            border: 2px solid var(--color-secundario);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 213, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 213, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(255, 213, 0, 0.3);
+        }
+
+        /* Footer */
+        .profile-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--color-bordes);
+            color: var(--color-texto-secundario);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .data-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .data-card:nth-child(1) { animation-delay: 0.1s; }
+        .data-card:nth-child(2) { animation-delay: 0.2s; }
+        .data-card:nth-child(3) { animation-delay: 0.3s; }
+        .data-card:nth-child(4) { animation-delay: 0.4s; }
+        .data-card:nth-child(5) { animation-delay: 0.5s; }
+        .data-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 15px 20px;
+            }
+
+            .profile-hero {
+                padding: 40px 20px;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-content {
+                padding: 25px 20px;
+            }
+
+            .profile-sidebar {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-
-<div class="perfil-card">
-
-    <div th:if="${success}" class="alert-success">
-        <p th:text="${success}"></p>
+<!-- Header -->
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a th:href="@{/}">
+                <img th:src="@{/Imagenes/logo.png}" alt="Logo AresFitness">
+            </a>
+        </div>
+        <div class="nav-actions">
+            <a th:href="@{/dashboard}" class="btn-header">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Dashboard
+            </a>
+        </div>
     </div>
+</header>
 
-    <h1 th:text="'Bienvenido/a, ' + ${cliente.nombre}">Bienvenido</h1>
-    <p>Rol de Cuenta: <span class="rol-tag" th:text="${rol}"></span></p>
-
-    <h2>Datos Personales</h2>
-    <dl class="data-grid">
-        <dt>Nombre Completo:</dt>
-        <dd th:text="${cliente.nombre} + ' ' + ${cliente.apellido}"></dd>
-
-        <dt>DNI:</dt>
-        <dd th:text="${cliente.dni}"></dd>
-
-        <dt>Fecha de Nacimiento:</dt>
-        <dd th:text="${#temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy')}"></dd>
-
-        <dt>Género:</dt>
-        <dd th:text="${cliente.genero.name()}"></dd>
-
-        <dt>Teléfono:</dt>
-        <dd th:text="${cliente.telefono != null ? cliente.telefono : 'N/A'}"></dd>
-
-        <dt>Dirección:</dt>
-        <dd th:text="${cliente.direccion != null ? cliente.direccion : 'N/A'}"></dd>
-    </dl>
-
-    <div class="action-buttons" style="margin-top: 30px;">
-        <a th:href="@{/perfil/editar}" class="edit-button">Editar Perfil</a>
-
-        <a th:href="@{/dashboard}" style="color: #007bff;">Volver al Dashboard</a>
+<!-- Profile Hero -->
+<section class="profile-hero">
+    <div class="hero-content">
+        <div class="avatar-container">
+            <i class="fas fa-user"></i>
+        </div>
+        <h1 class="welcome-title" th:text="'¡Hola, ' + ${cliente.nombre} + '!'">¡Hola!</h1>
+        <p style="color: var(--color-texto-secundario); margin-bottom: 15px;">
+            Bienvenido a tu espacio personal en AresFitness
+        </p>
+        <div class="rol-tag">
+            <i class="fas fa-user-shield"></i>
+            <span th:text="${rol}">CLIENTE</span>
+        </div>
     </div>
+</section>
 
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <aside class="profile-sidebar">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <i class="fas fa-chart-line"></i>
+                Mi Actividad
+            </h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Visitas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Clases</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Días Activo</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Asistencia</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <i class="fas fa-bolt"></i>
+                Acciones Rápidas
+            </h3>
+            <div class="quick-actions">
+                <a th:href="@{/perfil/editar}" class="quick-action">
+                    <i class="fas fa-edit"></i>
+                    <span>Editar Perfil</span>
+                </a>
+                <a th:href="@{/membresias}" class="quick-action">
+                    <i class="fas fa-crown"></i>
+                    <span>Mi Membresía</span>
+                </a>
+                <a href="#" class="quick-action">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>Mis Rutinas</span>
+                </a>
+                <a href="#" class="quick-action">
+                    <i class="fas fa-calendar"></i>
+                    <span>Reservar Clase</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="profile-content">
+        <!-- Alert -->
+        <div th:if="${success}" class="alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+
+        <h2 class="section-title">
+            <i class="fas fa-id-card"></i>
+            Información Personal
+        </h2>
+
+        <div class="data-grid">
+            <!-- Nombre Completo -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="data-label">Nombre Completo</div>
+                <div class="data-value" th:text="${cliente.nombre} + ' ' + ${cliente.apellido}"></div>
+            </div>
+
+            <!-- DNI -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <div class="data-label">DNI</div>
+                <div class="data-value" th:text="${cliente.dni}"></div>
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <div class="data-label">Fecha de Nacimiento</div>
+                <div class="data-value" th:text="${#temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy')}"></div>
+            </div>
+
+            <!-- Género -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-venus-mars"></i>
+                </div>
+                <div class="data-label">Género</div>
+                <div class="data-value" th:text="${cliente.genero.name()}"></div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="data-label">Teléfono</div>
+                <div class="data-value" th:classappend="${cliente.telefono == null} ? 'empty'"
+                     th:text="${cliente.telefono != null} ? ${cliente.telefono} : 'No especificado'"></div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="data-card">
+                <div class="data-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="data-label">Dirección</div>
+                <div class="data-value" th:classappend="${cliente.direccion == null} ? 'empty'"
+                     th:text="${cliente.direccion != null} ? ${cliente.direccion} : 'No especificada'"></div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a th:href="@{/perfil/editar}" class="btn-primary">
+                <i class="fas fa-edit"></i>
+                Editar Perfil
+            </a>
+            <a th:href="@{/dashboard}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Dashboard
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="profile-footer">
+            <p>Miembro desde: <strong th:text="${#temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy')}"></strong></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Última actualización: <strong th:text="${#temporals.format(cliente.fechaActualizacion, 'dd/MM/yyyy HH:mm')}"></strong>
+            </p>
+        </div>
+    </main>
 </div>
 
+<script>
+    // Animaciones al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.data-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Efecto de aparición gradual
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        });
+
+        cards.forEach(card => {
+            card.style.animationPlayState = 'paused';
+            observer.observe(card);
+        });
+    });
+</script>
 </body>
 </html>

@@ -2,70 +2,617 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuarios - Panel Admin</title>
+    <link rel="stylesheet" href=".css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f2f5; }
-        .container { max-width: 90%; margin: 30px auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;}
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-crear { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; text-decoration: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; color: #343a40; }
-        .btn-editar { background-color: #ffc107; color: #343a40; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 0.9em;}
+        :root {
+            --color-primario: #d82c2c;
+            --color-primario-hover: #b82424;
+            --color-secundario: #ffd500;
+            --color-secundario-hover: #ffdf40;
+            --color-fondo: #0f0e0d;
+            --color-fondo-card: rgba(30, 30, 30, 0.9);
+            --color-texto: #ffffff;
+            --color-texto-secundario: #b0b0b0;
+            --color-bordes: rgba(255, 213, 0, 0.3);
+            --sombra: 0 10px 30px rgba(0, 0, 0, 0.6);
+            --sombra-hover: 0 15px 40px rgba(0, 0, 0, 0.7);
+            --gradiente-dorado: linear-gradient(135deg, #ffd500, #ffed4e);
+            --gradiente-rojo: linear-gradient(135deg, #d82c2c, #ff5252);
+            --gradiente-verde: linear-gradient(135deg, #06d6a0, #1b9aaa);
+            --gradiente-azul: linear-gradient(135deg, #118ab2, #073b4c);
+            --gradiente-purpura: linear-gradient(135deg, #7209b7, #560bad);
+            --gradiente-negro: linear-gradient(135deg, #1a1a1a, #0f0e0d);
+            --transicion: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: var(--color-texto);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--color-bordes);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logo-container img {
+            height: 50px;
+        }
+
+        .logo-text h1 {
+            font-size: 2rem;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 213, 0, 0.3);
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 95%;
+            margin: 0 auto;
+            background: var(--color-fondo-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--sombra);
+            border: 1px solid var(--color-bordes);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-bordes);
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            background: var(--gradiente-dorado);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .title-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradiente-azul);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .btn-crear {
+            background: var(--gradiente-rojo);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transicion);
+            box-shadow: 0 4px 15px rgba(216, 44, 44, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-crear:hover {
+            background: var(--gradiente-rojo);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(216, 44, 44, 0.4);
+        }
+
+        /* Alertas */
+        .success-alert {
+            padding: 15px 20px;
+            background: rgba(21, 87, 36, 0.2);
+            color: #4ade80;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Filtros y Búsqueda */
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-bordes);
+            border-radius: 30px;
+            color: var(--color-texto);
+            font-size: 1rem;
+            transition: var(--transicion);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 2px rgba(255, 213, 0, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-secundario);
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-bordes);
+            border-radius: 30px;
+            color: var(--color-texto);
+            font-size: 1rem;
+            min-width: 180px;
+        }
+
+        /* Tabla */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 1px solid var(--color-bordes);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            background: rgba(255, 213, 0, 0.1);
+        }
+
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            color: var(--color-secundario);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--color-bordes);
+        }
+
+        tbody tr {
+            transition: var(--transicion);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        td {
+            padding: 16px 20px;
+            color: var(--color-texto);
+        }
+
+        /* Estados */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(6, 214, 160, 0.2);
+            color: #06d6a0;
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+
+        .status-inactive {
+            background: rgba(216, 44, 44, 0.2);
+            color: #d82c2c;
+            border: 1px solid rgba(216, 44, 44, 0.3);
+        }
+
+        /* Rol badges */
+        .role-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-admin {
+            background: rgba(216, 44, 44, 0.2);
+            color: #d82c2c;
+            border: 1px solid rgba(216, 44, 44, 0.3);
+        }
+
+        .role-entrenador {
+            background: rgba(255, 213, 0, 0.2);
+            color: #ffd500;
+            border: 1px solid rgba(255, 213, 0, 0.3);
+        }
+
+        .role-cliente {
+            background: rgba(6, 214, 160, 0.2);
+            color: #06d6a0;
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+
+        /* Acciones */
+        .acciones {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-editar {
+            background: var(--gradiente-dorado);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(255, 213, 0, 0.3);
+        }
+
+        .btn-editar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 213, 0, 0.4);
+        }
+
+        .btn-eliminar {
+            background: rgba(216, 44, 44, 0.2);
+            color: #d82c2c;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(216, 44, 44, 0.3);
+        }
+
+        .btn-eliminar:hover {
+            background: rgba(216, 44, 44, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-texto-secundario);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--color-texto-secundario);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--color-texto);
+        }
+
+        /* Footer */
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-bordes);
+        }
+
+        .btn-volver {
+            background: transparent;
+            color: var(--color-secundario);
+            padding: 10px 20px;
+            border: 2px solid var(--color-secundario);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transicion);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-volver:hover {
+            background: rgba(255, 213, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .stats-info {
+            color: var(--color-texto-secundario);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .page-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .logo-text h1 {
+                font-size: 1.5rem;
+            }
+
+            .acciones {
+                flex-direction: column;
+            }
+
+            .footer-actions {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
+<!-- Header -->
+<header class="header">
+    <div class="logo-container">
+        <a th:href="@{/}">
+            <img th:src="@{/Imagenes/logo.png}" alt="Logo AresFitness">
+        </a>
+        <div class="logo-text">
+            <h1>AresFitness</h1>
+        </div>
+    </div>
+</header>
 
+<!-- Container Principal -->
 <div class="container">
+    <!-- Top Bar -->
     <div class="top-bar">
-        <h1>👥 Lista de Usuarios del Sistema</h1>
-        <a th:href="@{/admin/usuarios/crear}" class="btn-crear">➕ Crear Nuevo Usuario</a>
+        <div class="page-title">
+            <div class="title-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h1>Gestión de Usuarios</h1>
+        </div>
+        <a th:href="@{/admin/usuarios/crear}" class="btn-crear">
+            <i class="fas fa-user-plus"></i>
+            Crear Nuevo Usuario
+        </a>
     </div>
 
-    <div th:if="${success}" class="success-alert" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
-        <p th:text="${success}"></p>
+    <!-- Alertas -->
+    <div th:if="${success}" class="success-alert">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>DNI</th>
-            <th>Nombre Completo</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.id}">1</td>
-            <td th:text="${usuario.dni}">12345678</td>
-            <td>
-                <span th:text="${usuario.nombre}"></span>
-                <span th:text="${usuario.apellido}"></span>
-            </td>
-            <td th:text="${usuario.roles}">CLIENTE</td>
-            <td>
-                <span th:if="${usuario.estado == 'ACTIVO'}" style="color: green; font-weight: bold;" th:text="${usuario.estado}">ACTIVO</span>
-                <span th:unless="${usuario.estado == 'ACTIVO'}" style="color: red;" th:text="${usuario.estado}">INACTIVO</span>
-            </td>
-            <td>
-                <a th:href="@{/admin/usuarios/editar/{id}(id=${usuario.id})}" class="btn-editar">Editar</a>
-            </td>
-        </tr>
+    <!-- Filtros y Búsqueda -->
+    <div class="filters-bar">
+        <div class="search-box">
+            <input type="text" placeholder="Buscar usuarios por nombre, DNI o email...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <select class="filter-select">
+            <option value="">Todos los roles</option>
+            <option value="ADMIN">Administradores</option>
+            <option value="ENTRENADOR">Entrenadores</option>
+            <option value="CLIENTE">Clientes</option>
+        </select>
+        <select class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="ACTIVO">Activos</option>
+            <option value="INACTIVO">Inactivos</option>
+        </select>
+    </div>
 
-        <tr th:if="${#lists.isEmpty(usuarios)}">
-            <td colspan="6" style="text-align: center; color: #6c757d;">No hay usuarios registrados en el sistema.</td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Tabla de Usuarios -->
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>DNI</th>
+                <th>Nombre Completo</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.id}">1</td>
+                <td th:text="${usuario.dni}">12345678</td>
+                <td>
+                    <strong th:text="${usuario.nombre + ' ' + usuario.apellido}">Juan Pérez</strong>
+                </td>
+                <td th:text="${usuario.email}">juan@email.com</td>
+                <td>
+                            <span th:classappend="'role-badge ' +
+                                (${usuario.roles} == 'ADMIN' ? 'role-admin' :
+                                 ${usuario.roles} == 'ENTRENADOR' ? 'role-entrenador' : 'role-cliente')"
+                                  th:text="${usuario.roles}">CLIENTE</span>
+                </td>
+                <td>
+                            <span th:classappend="'status-badge ' +
+                                (${usuario.estado} == 'ACTIVO' ? 'status-active' : 'status-inactive')"
+                                  th:text="${usuario.estado}">ACTIVO</span>
+                </td>
+                <td>
+                    <div class="acciones">
+                        <a th:href="@{/admin/usuarios/editar/{id}(id=${usuario.id})}" class="btn-editar">
+                            <i class="fas fa-edit"></i>
+                            Editar
+                        </a>
+                        <a href="#" class="btn-eliminar">
+                            <i class="fas fa-trash"></i>
+                            Eliminar
+                        </a>
+                    </div>
+                </td>
+            </tr>
 
-    <p style="margin-top: 20px;">
-        <a th:href="@{/admin/dashboard}">Volver al Dashboard</a>
-    </p>
+            <tr th:if="${#lists.isEmpty(usuarios)}">
+                <td colspan="7">
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>No hay usuarios registrados</h3>
+                        <p>Comienza creando el primer usuario del sistema.</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <a th:href="@{/admin/dashboard}" class="btn-volver">
+            <i class="fas fa-arrow-left"></i>
+            Volver al Dashboard
+        </a>
+        <div class="stats-info">
+            Total de usuarios: <strong th:text="${#lists.size(usuarios)}">0</strong>
+        </div>
+    </div>
 </div>
 
+<script>
+    // Funcionalidad de búsqueda y filtros
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-box input');
+        const roleFilter = document.querySelectorAll('.filter-select')[0];
+        const statusFilter = document.querySelectorAll('.filter-select')[1];
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleValue = roleFilter.value;
+            const statusValue = statusFilter.value;
+
+            tableRows.forEach(row => {
+                if (row.querySelector('.empty-state')) return;
+
+                const name = row.cells[2].textContent.toLowerCase();
+                const dni = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[3].textContent.toLowerCase();
+                const role = row.cells[4].textContent;
+                const status = row.cells[5].textContent;
+
+                const matchesSearch = name.includes(searchTerm) || dni.includes(searchTerm) || email.includes(searchTerm);
+                const matchesRole = !roleValue || role === roleValue;
+                const matchesStatus = !statusValue || status === statusValue;
+
+                row.style.display = matchesSearch && matchesRole && matchesStatus ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        roleFilter.addEventListener('change', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+
+        // Animación de entrada para las filas
+        tableRows.forEach((row, index) => {
+            if (!row.querySelector('.empty-state')) {
+                row.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s both`;
+            }
+        });
+    });
+</script>
 </body>
 </html>

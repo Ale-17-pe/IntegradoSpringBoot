@@ -129,7 +129,7 @@ public class AdminController {
     @GetMapping("/planes")
     public String listarPlanes(Model model) {
         model.addAttribute("planes", planService.listarTodos());
-        return "redirect:/admin/lista-planes"; // Vista: admin/lista-planes.html
+        return "redirect:/admin/lista-planes";
     }
     @GetMapping("/planes/editar/{id}")
     public String mostrarFormularioEdicionPlan(@PathVariable Long id, Model model) {

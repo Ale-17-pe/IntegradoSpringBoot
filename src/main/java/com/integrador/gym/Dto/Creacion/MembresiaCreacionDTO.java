@@ -19,4 +19,7 @@ public class MembresiaCreacionDTO {
 
     @NotNull(message = "ID del usuario creador es obligatorio")
     private Long idUsuarioCreador;
+
+    @NotNull(message = "El ID del cliente es obligatorio.")
+    private Long clienteId;
 }

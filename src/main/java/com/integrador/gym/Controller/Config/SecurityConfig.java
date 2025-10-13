@@ -44,7 +44,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         // Recursos públicos
-                        .requestMatchers("/", "/index", "/ubicacion/**", "/registro/**", "/login", "/Css/**", "/JS/**", "/Imagenes/**", "/error")
+                        .requestMatchers("/", "/index","/planes/**", "/ubicacion/**", "/registro/**", "/login", "/Css/**", "/JS/**", "/Imagenes/**", "/error")
                         .permitAll()
 
                         // Roles específicos
